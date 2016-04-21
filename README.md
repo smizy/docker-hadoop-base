@@ -1,17 +1,31 @@
 # docker-hadoop-base
-Light weight hadoop-base docker image based on java:8-jre-alpine
+Lightweight hadoop-common docker image (based on alpine)
+[![](https://imagelayers.io/badge/smizy/hadoop-base:2.7.2-alpine.svg)](https://imagelayers.io/?images=smizy/hadoop-base:2.7.2-alpine 'Get your own badge on imagelayers.io')
 
-## manual cluster setup
-The following is non-secure hadoop cluster setup on single docker host
-using docker bridge network.
+* Namenode is set to high availability mode.
+* Non secure mode
+* Native-hadoop library missing
 
+The following master FQDN and size is fixed.
+See `etc/*.xml` like `hdfs-site.xml`.
+
+* zookeeper-1.vnet, zookeeper-2.vnet, zookeeper-3.vnet
+* namenode-1.vent, namenode-2.vnet
+* journalnode-1.vnet, journalnode-2.vent, journalnode-3.vnet
+* resourcemanager-1.vnet
+
+Using FQDN on Hadoop require dns lookup and reverse lookup. 
+
+This setup use FQDN with docker embedded DNS instead of editing /etc/hosts. 
+
+So, you need set --name and --net (container_name.network_name as hostname) for dns lookup from other containers 
+, and set --hostname(-h) for reverse lookup from container itself.
+
+## manual cluster setup on single docker host
  
 ```
 # network
 docker network create vnet
-
-# build
-docker build -t smizy/hadoop-base:2.7.2-alpine .
 
 # zookeeper
 for i in 1 2 3; do docker run \
