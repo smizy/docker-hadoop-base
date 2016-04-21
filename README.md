@@ -1,13 +1,14 @@
 # docker-hadoop-base
-Lightweight hadoop-common docker image (based on alpine)
+
 [![](https://imagelayers.io/badge/smizy/hadoop-base:2.7.2-alpine.svg)](https://imagelayers.io/?images=smizy/hadoop-base:2.7.2-alpine 'Get your own badge on imagelayers.io')
+
+Lightweight hadoop-common docker image (based on alpine)
 
 * Namenode is set to high availability mode.
 * Non secure mode
 * Native-hadoop library missing
 
-The following master FQDN and size is fixed.
-See `etc/*.xml` like `hdfs-site.xml`.
+The following master FQDN and size is fixed. See `etc/*.xml`.
 
 * zookeeper-1.vnet, zookeeper-2.vnet, zookeeper-3.vnet
 * namenode-1.vent, namenode-2.vnet
