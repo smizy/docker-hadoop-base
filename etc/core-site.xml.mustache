@@ -19,16 +19,16 @@
 <configuration>
     <property>
         <name>fs.defaultFS</name>
-        <value>hdfs://CLUSTER_NAME</value>
+        <value>hdfs://{{HADOOP_CLUSTER_NAME}}</value>
     </property>
   
     <property>
         <name>hadoop.tmp.dir</name>
-        <value>/hadoop</value>
+        <value>{{HADOOP_TMP_DIR}}</value>
     </property>
     
     <property>
-        <name>ha.zookeeper.quorum.CLUSTER_NAME</name>
-        <value>zookeeper-1.vnet:2181,zookeeper-2.vnet:2181,zookeeper-3.vnet:2181</value>
+        <name>ha.zookeeper.quorum.{{HADOOP_CLUSTER_NAME}}</name>
+        <value>{{HADOOP_ZOOKEEPER_QUORUM}}</value>
     </property>   
 </configuration>

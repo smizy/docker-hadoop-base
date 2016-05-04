@@ -20,47 +20,41 @@
 
     <property>
     <name>dfs.nameservices</name>
-    <value>CLUSTER_NAME</value>
+    <value>{{HADOOP_CLUSTER_NAME}}</value>
     </property>
     
     <property>
-        <name>dfs.ha.namenodes.CLUSTER_NAME</name>
+        <name>dfs.ha.namenodes.{{HADOOP_CLUSTER_NAME}}</name>
         <value>nn1,nn2</value>
     </property> 
- <!--   
-    <property>
-        <name>dfs.namenode.name.dir.CLUSTER_NAME</name>
-        <value>/hadoop/hdfs/name</value>
-    </property> 
- -->   
     
     <property>
-        <name>dfs.namenode.rpc-address.CLUSTER_NAME.nn1</name>
-        <value>namenode-1.vnet:8020</value>
+        <name>dfs.namenode.rpc-address.{{HADOOP_CLUSTER_NAME}}.nn1</name>
+        <value>{{HADOOP_NAMENODE1_HOSTNAME}}:8020</value>
     </property>
     
     <property>
-        <name>dfs.namenode.rpc-address.CLUSTER_NAME.nn2</name>
-        <value>namenode-2.vnet:8020</value>
+        <name>dfs.namenode.rpc-address.{{HADOOP_CLUSTER_NAME}}.nn2</name>
+        <value>{{HADOOP_NAMENODE2_HOSTNAME}}:8020</value>
     </property>
 
     <property>
-        <name>dfs.namenode.http-address.CLUSTER_NAME.nn1</name>
-        <value>namenode-1.vnet:50070</value>
+        <name>dfs.namenode.http-address.{{HADOOP_CLUSTER_NAME}}.nn1</name>
+        <value>{{HADOOP_NAMENODE1_HOSTNAME}}:50070</value>
     </property>
     
     <property>
-        <name>dfs.namenode.http-address.CLUSTER_NAME.nn2</name>
-        <value>namenode-2.vnet:50070</value>
-    </property>    
-    
+        <name>dfs.namenode.http-address.{{HADOOP_CLUSTER_NAME}}.nn2</name>
+        <value>{{HADOOP_NAMENODE2_HOSTNAME}}:50070</value>
+    </property>     
+        
     <property>
         <name>dfs.namenode.shared.edits.dir</name>
-        <value>qjournal://journalnode-1.vnet:8485;journalnode-2.vnet:8485;journalnode-3.vnet:8485/CLUSTER_NAME</value>
+        <value>qjournal://{{HADOOP_QJOURNAL_ADDRESS}}/{{HADOOP_CLUSTER_NAME}}</value>
     </property>
 
     <property>
-        <name>dfs.client.failover.proxy.provider.CLUSTER_NAME</name>
+        <name>dfs.client.failover.proxy.provider.{{HADOOP_CLUSTER_NAME}}</name>
         <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
     </property>
     
@@ -71,12 +65,12 @@
 
     <property>
         <name>dfs.journalnode.edits.dir</name>
-        <value>/hadoop/dfs/journal/data</value>
+        <value>{{HADOOP_TMP_DIR}}/dfs/journal/data</value>
     </property>
 
     <property>
         <name>dfs.replication</name>
-        <value>1</value>
+        <value>{{HADOOP_DFS_REPLICATION}}</value>
     </property>
 
     <property>
@@ -84,6 +78,5 @@
         <value>true</value>
     </property>
         
-   
 
 </configuration>
