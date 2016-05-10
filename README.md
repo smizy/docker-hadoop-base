@@ -7,6 +7,7 @@ Hadoop(Common/HDFS/YARN/MapReduce) docker image based on jre-8:alpine
 * Namenode is set to high availability mode.
 * Non secure mode
 * Native-hadoop library missing
+* Not sshd setting, you cannot use sbin/start-*.sh. use docker-compose or docker engine to start/stop daemon 
 * conf template applied by mustache.sh
 
 This setup use FQDN with docker embedded DNS instead of editing /etc/hosts. 
@@ -15,85 +16,141 @@ Using FQDN on Hadoop require dns lookup and reverse lookup.
 So, you need set --name and --net (container_name.network_name as hostname) for dns lookup from other containers 
 , and set --hostname(-h) for reverse lookup from container itself.
 
-## manual cluster setup on single docker host
- 
-```
-# build
-docker build -t local/hadoop-base:2.7.2-alpine .
 
-# network
+## setup pseudo-distributed hadoop cluster on a single docker host  
+
+* The following sample uses docker host named "default" on virtualbox
+
+```
+# load default env
+eval $(docker-machine env default)
+
+# network 
 docker network create vnet
 
-# zookeeper
-for i in 1 2 3; do docker run \
---name zookeeper-$i \
---net vnet \
--h zookeeper-$i.vnet \
--d smizy/zookeeper:3.4-alpine \
--server $i 3 \
-;done
+# up zookeeper, journalnode, namenode, datanode, resouremanager, nodemanager
+docker-compose up -d
 
-# journalnode
-for i in 1 2 3; do docker run \
---name journalnode-$i \
---net vnet \
--h journalnode-$i.vnet \
---expose 8480 \
---expose 8485 \
--d local/hadoop-base:2.7.2-alpine \
-entrypoint.sh journalnode \
-;done 
+# check stats
+docker ps --format {{.Names}} | xargs docker stats
 
-# namenode
-for i in 1 2; do docker run \
---name namenode-$i \
---net vnet \
--h namenode-$i.vnet \
---expose 8020 \
---expose 50070 \
--d local/hadoop-base:2.7.2-alpine \
-entrypoint.sh namenode-$i \
-;done 
+# run example data (pi calc)
+docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar pi 10 10
 
-# datanode
-for i in 1 2 3; do docker run \
---name datanode-$i \
---net vnet \
--h datanode-$i.vnet \
---expose 50010 \
---expose 50020 \
---expose 50075 \
--d local/hadoop-base:2.7.2-alpine \
-entrypoint.sh datanode \
-;done 
+# cleanup  
+docker-compose -f  kill
+docker ps -aq -f status=exited | xargs docker rm -f
 
-# yarn resourcemanager
-for i in 1; do docker run \
---name resourcemanager-$i \
---net vnet \
--h resourcemanager-$i.vnet \
---expose 8030-8033 \
--p 8088:8088 \
--d local/hadoop-base:2.7.2-alpine \
-entrypoint.sh resourcemanager \
-;done 
+```
 
-# yarn nodemanager
-for i in 1 2 3 ; do docker run \
---name nodemanager-$i \
---net vnet \
--h nodemanager-$i.vnet \
---expose 8040-8042 \
---volumes-from datanode-$i \
--d local/hadoop-base:2.7.2-alpine \
-entrypoint.sh nodemanager \
-;done 
+
+## setup fully-distributed hadoop cluster on a swarm cluster 
+
+* create 6 docker hosts. manager-1, manager-2, manager-3, node-d-1, node-d-2, node-d-3
+* need 3G total memory (each 512MB)
+
   
-# run example data
-docker exec -it -u hdfs nodemanager-1 hdfs dfs -mkdir /user 
-docker exec -it -u hdfs nodemanager-1 hdfs dfs -mkdir /user/hdfs
-docker exec -it -u hdfs nodemanager-1 hdfs dfs -put etc/hadoop input
-docker exec -it -u hdfs nodemanager-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar grep input output 'dfs[a-z.]+'
-docker exec -it -u hdfs nodemanager-1 hdfs dfs -cat output/*
+```
+# create manager node on virtualbox with docker-machine and start consul/swarm master
+for i in 1 2 3; do \
+  docker-machine create \
+  -d virtualbox \
+  --virtualbox-memory 512 \
+  --engine-opt="cluster-store=consul://localhost:8500" \
+  --engine-opt="cluster-advertise=eth1:2376" \
+  --swarm \
+  --swarm-discovery consul://localhost:8500 \
+  --swarm-master \
+  --swarm-opt replication \
+  manager-$i 
+  
+  # consul server 
+  docker $(docker-machine config manager-$i) run -d \
+  --name consul-server \
+  --net host \
+  --restart unless-stopped \
+  gliderlabs/consul-server:0.6 \
+  -server -bootstrap-expect 3  \
+  -bind $(docker-machine ip manager-$i) 
+done
+
+# consul-server join
+docker $(docker-machine config manager-1) exec -it consul-server consul join \
+  $(docker-machine ip manager-1) $(docker-machine ip manager-2) $(docker-machine ip manager-3)
+
+# check consul members 
+docker $(docker-machine config manager-1) exec -it consul-server consul members
+
+# create data node and start consul/swarm agent on virtualbox with docker-machine
+for i in 1 2 3; do \
+  docker-machine create \
+  -d virtualbox \
+  --virtualbox-memory 512 \
+  --engine-opt="cluster-store=consul://localhost:8500" \
+  --engine-opt="cluster-advertise=eth1:2376" \
+  --swarm \
+  --swarm-discovery consul://localhost:8500 \
+  node-d-$i; 
+  
+  docker $(docker-machine config node-d-$i) run -d \
+  --name consul-agent \
+  --net host \
+  --restart unless-stopped \
+  gliderlabs/consul-agent:0.6 \
+  -bind $(docker-machine ip node-d-$i)
+  
+  # consul-agent join
+  docker $(docker-machine config node-d-$i) exec -it consul-agent consul join \
+  $(docker-machine ip manager-1) $(docker-machine ip manager-2) $(docker-machine ip manager-3)    
+done
+
+# check consul members 
+docker $(docker-machine config node-d-1) exec -it consul-agent consul members
+ 
+# registrator
+for i in manager-1 manager-2 manager-3 for i in node-d-1 node-d-2 node-d-3; do \
+  docker $(docker-machine config ${i}) run -d \
+  --name registrator \
+  --net host \
+  --restart unless-stopped \
+  -v /var/run/docker.sock:/tmp/docker.sock \
+  gliderlabs/registrator -internal  consul://localhost:8500 
+done 
+
+# create overlay network
+docker $(docker-machine config manager-1) network create -d overlay vnet
+
+# load swarm-enabled env
+eval $(docker-machine env --swarm manager-1)
+
+# up zookeeper, journalnode, namenode, datanode, resouremanager, nodemanager
+docker-compose -f docker-compose.fully.yml up -d
+
+# check ps
+docker-compose -f docker-compose.fully.yml ps
+
+# check consul ui
+open http://$(docker-machine ip manager-1):8500/ui
+ 
+# check stats
+docker ps --format {{.Names}} | xargs docker stats
+
+# check hadoop process stats
+docker ps --format {{.Names}} | grep -Ev 'consul|registrator'  | xargs docker stats
+  
+# run example data (pi calc)
+docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar pi 10 10
+
+# run example data (word count)
+docker exec -it -u hdfs datanode-1 hdfs dfs -mkdir /user 
+docker exec -it -u hdfs datanode-1 hdfs dfs -mkdir /user/hdfs
+docker exec -it -u hdfs datanode-1 hdfs dfs -put etc/hadoop input
+docker exec -it -u hdfs datanode-1 hdfs dfs -ls /user/hdfs/input
+docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar grep input output 'dfs[a-z.]+'
+docker exec -it -u hdfs datanode-1 hdfs dfs -cat output/*
+
+# cleanup  
+docker-compose -f docker-compose.fully.yml kill
+docker ps -aq -f status=exited | xargs docker rm -f 
 
 ```

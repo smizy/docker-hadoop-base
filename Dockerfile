@@ -89,3 +89,5 @@ COPY bin/*  /usr/local/bin/
 WORKDIR ${HADOOP_COMMON_HOME}
 
 VOLUME ["${HADOOP_TMP_DIR}", "${HADOOP_LOG_DIR}", "${YARN_LOG_DIR}"]
+
+ENTRYPOINT ["entrypoint.sh"]

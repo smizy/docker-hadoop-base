@@ -1,0 +1,124 @@
+version: "2"
+services:
+
+  zookeeper-1:
+    extends: 
+      file: docker-compose.yml
+      service: zookeeper-1
+    environment:
+      - "constraint:node==manager-1"
+
+  zookeeper-2:
+    extends: 
+      file: docker-compose.yml
+      service: zookeeper-2  
+    environment:
+      - "constraint:node==manager-2"
+
+  zookeeper-3:
+    extends: 
+      file: docker-compose.yml
+      service: zookeeper-3  
+    environment:
+      - "constraint:node==manager-3"
+
+  journalnode-1:
+    extends: 
+      file: docker-compose.yml
+      service: journalnode-1  
+    depends_on: ["zookeeper-1", "zookeeper-2", "zookeeper-3"]  
+    environment:
+      - "affinity:container==zookeeper-1"
+
+  journalnode-2:
+    extends: 
+      file: docker-compose.yml
+      service: journalnode-2
+    depends_on: ["zookeeper-1", "zookeeper-2", "zookeeper-3"]  
+    environment:
+      - "affinity:container==zookeeper-2"
+
+  journalnode-3:
+    extends: 
+      file: docker-compose.yml
+      service: journalnode-3  
+    depends_on: ["zookeeper-1", "zookeeper-2", "zookeeper-3"]  
+    environment:
+      - "affinity:container==zookeeper-3"        
+
+  namenode-1:
+    extends: 
+      file: docker-compose.yml
+      service: namenode-1 
+    depends_on: ["journalnode-1", "journalnode-2", "journalnode-3"]   
+    environment:
+      - "affinity:container==journalnode-1"
+
+  namenode-2:
+    extends: 
+      file: docker-compose.yml
+      service: namenode-2 
+    depends_on: ["datanode-1"]   
+    environment:
+      - "affinity:container==journalnode-2"    
+
+  datanode-1:
+    extends: 
+      file: docker-compose.yml
+      service: datanode-1 
+    depends_on: ["namenode-1"]  
+    environment:
+      - "constraint:node==node-d-1"
+        
+  datanode-2:
+    extends: 
+      file: docker-compose.yml
+      service: datanode-2 
+    depends_on: ["namenode-1"]  
+    environment:
+      - "constraint:node==node-d-2"   
+
+  datanode-3:
+    extends: 
+      file: docker-compose.yml
+      service: datanode-3
+    depends_on: ["namenode-1"]  
+    environment:
+      - "constraint:node==node-d-3" 
+    
+  resourcemanager-1:
+    extends: 
+      file: docker-compose.yml
+      service: resourcemanager-1 
+    depends_on: ["datanode-1"]  
+    environment:
+      - "constraint:node==manager-*"
+    
+  nodemanager-1:
+    extends: 
+      file: docker-compose.yml
+      service: nodemanager-1  
+    depends_on: ["datanode-1"]  
+    environment:
+      - "affinity:container==datanode-1"
+
+  nodemanager-2:
+    extends: 
+      file: docker-compose.yml
+      service: nodemanager-2
+    depends_on: ["datanode-2"]   
+    environment:
+      - "affinity:container==datanode-2"
+
+  nodemanager-3:
+    extends: 
+      file: docker-compose.yml
+      service: nodemanager-3 
+    depends_on: ["datanode-3"]  
+    environment:
+      - "affinity:container==datanode-3"
+                               
+networks:
+  vnet:
+    external:
+      name: vnet     
