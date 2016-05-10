@@ -38,8 +38,8 @@ docker ps --format {{.Names}} | xargs docker stats
 docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar pi 10 10
 
 # cleanup  
-docker-compose -f  kill
-docker ps -aq -f status=exited | xargs docker rm -f
+docker-compose kill
+docker-compose rm -f
 
 ```
 
@@ -108,7 +108,7 @@ done
 docker $(docker-machine config node-d-1) exec -it consul-agent consul members
  
 # registrator
-for i in manager-1 manager-2 manager-3 for i in node-d-1 node-d-2 node-d-3; do \
+for i in manager-1 manager-2 manager-3 node-d-1 node-d-2 node-d-3; do \
   docker $(docker-machine config ${i}) run -d \
   --name registrator \
   --net host \
@@ -117,11 +117,11 @@ for i in manager-1 manager-2 manager-3 for i in node-d-1 node-d-2 node-d-3; do \
   gliderlabs/registrator -internal  consul://localhost:8500 
 done 
 
-# create overlay network
-docker $(docker-machine config manager-1) network create -d overlay vnet
-
 # load swarm-enabled env
 eval $(docker-machine env --swarm manager-1)
+
+# create overlay network
+docker $(docker-machine config manager-1) network create -d overlay vnet
 
 # up zookeeper, journalnode, namenode, datanode, resouremanager, nodemanager
 docker-compose -f docker-compose.fully.yml up -d
@@ -151,6 +151,6 @@ docker exec -it -u hdfs datanode-1 hdfs dfs -cat output/*
 
 # cleanup  
 docker-compose -f docker-compose.fully.yml kill
-docker ps -aq -f status=exited | xargs docker rm -f 
+docker-compose -f docker-compose.fully.yml rm -f 
 
 ```
