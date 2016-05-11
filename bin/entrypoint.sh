@@ -2,13 +2,11 @@
 
 set -eo pipefail
 
-. mustache.sh
-
 # apply template
 for template in $(ls ${HADOOP_CONF_DIR}/*.mustache)
 do
     conf_file=${template%.mustache}
-    cat ${conf_file}.mustache | mustache > ${conf_file}
+    cat ${conf_file}.mustache | mustache.sh > ${conf_file}
 done
 
 

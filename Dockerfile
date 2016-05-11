@@ -81,10 +81,23 @@ RUN apk --no-cache add \
         ${HADOOP_TMP_DIR}/nm-local-dir \
         ${HADOOP_TMP_DIR}/yarn-nm-recovery \
         ${YARN_LOG_DIR} \
-    && chown -R mapred:hadoop ${HADOOP_TMP_DIR}/mapred    
+    && chown -R mapred:hadoop ${HADOOP_TMP_DIR}/mapred  \
+    # remove unnecessary doc/src files 
+    && rm -rf ${HADOOP_HOME}/share/doc \
+    && for dir in common hdfs mapreduce tools yarn; do \
+         rm -rf ${HADOOP_HOME}/share/hadoop/${dir}/sources; \
+       done \
+    && rm -rf ${HADOOP_HOME}/share/hadoop/common/jdiff \
+    && rm -rf ${HADOOP_HOME}/share/hadoop/mapreduce/lib-examples \
+    && rm -rf ${HADOOP_HOME}/share/hadoop/yarn/test \
+    && find ${HADOOP_HOME}/share/hadoop -name *test*.jar | xargs rm -rf \
+    # remove heavy unused lib
+    && rm -rf ${HADOOP_HOME}/share/hadoop/httpfs \
+    && rm -rf ${HADOOP_HOME}/share/hadoop/kms
 
 COPY etc/*  ${HADOOP_CONF_DIR}/
 COPY bin/*  /usr/local/bin/
+COPY lib/*  /usr/local/lib/
         
 WORKDIR ${HADOOP_COMMON_HOME}
 

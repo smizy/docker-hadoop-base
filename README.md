@@ -138,16 +138,20 @@ docker ps --format {{.Names}} | xargs docker stats
 # check hadoop process stats
 docker ps --format {{.Names}} | grep -Ev 'consul|registrator'  | xargs docker stats
   
-# run example data (pi calc)
+# run example (pi calc)
 docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar pi 10 10
 
-# run example data (word count)
-docker exec -it -u hdfs datanode-1 hdfs dfs -mkdir /user 
-docker exec -it -u hdfs datanode-1 hdfs dfs -mkdir /user/hdfs
+# prepare sample data
 docker exec -it -u hdfs datanode-1 hdfs dfs -put etc/hadoop input
 docker exec -it -u hdfs datanode-1 hdfs dfs -ls /user/hdfs/input
+
+# run example (grep count)
 docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar grep input output 'dfs[a-z.]+'
 docker exec -it -u hdfs datanode-1 hdfs dfs -cat output/*
+
+# run example (word count)
+docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar wordcount input/hadoop-env.sh output2
+docker exec -it -u hdfs datanode-1 hdfs dfs -cat output2/*
 
 # cleanup  
 docker-compose -f docker-compose.fully.yml kill
