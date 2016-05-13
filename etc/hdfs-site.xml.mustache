@@ -19,8 +19,13 @@
 <configuration>
 
     <property>
-    <name>dfs.nameservices</name>
-    <value>{{HADOOP_CLUSTER_NAME}}</value>
+        <name>dfs.permissions.superusergroup</name>
+        <value>hadoop</value>
+    </property>
+    
+    <property>
+        <name>dfs.nameservices</name>
+        <value>{{HADOOP_CLUSTER_NAME}}</value>
     </property>
     
     <property>

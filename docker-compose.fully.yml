@@ -58,7 +58,7 @@ services:
     extends: 
       file: docker-compose.yml
       service: namenode-2 
-    depends_on: ["datanode-1"]   
+    depends_on: ["namenode-1"]    
     environment:
       - "affinity:container==journalnode-2"    
 
@@ -89,11 +89,17 @@ services:
   resourcemanager-1:
     extends: 
       file: docker-compose.yml
-      service: resourcemanager-1 
-    depends_on: ["datanode-1"]  
+      service: resourcemanager-1  
     environment:
       - "constraint:node==manager-*"
-    
+  
+  historyserver-1:
+    extends: 
+      file: docker-compose.yml
+      service: historyserver-1  
+    environment:
+      - "constraint:node==manager-*"
+        
   nodemanager-1:
     extends: 
       file: docker-compose.yml

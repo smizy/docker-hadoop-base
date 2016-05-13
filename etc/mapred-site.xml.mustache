@@ -30,5 +30,16 @@
     <property>
         <name>mapreduce.reduce.memory.mb</name>
         <value>{{MAPRED_REDUCE_MEMORY_MB}}</value>
-    </property>    
+    </property>     
+ 
+    <property>
+        <name>mapreduce.jobhistory.address</name>
+        <value>{{MAPRED_JOBHISTORY_HOSTNAME}}:10020</value>
+    </property> 
+
+    <property>
+        <name>mapreduce.jobhistory.webapp.address</name>
+        <value>{{MAPRED_JOBHISTORY_HOSTNAME}}:19888</value>
+    </property> 
+     
 </configuration>

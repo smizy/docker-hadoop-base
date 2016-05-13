@@ -23,6 +23,7 @@ ENV HADOOP_NAMENODE2_HOSTNAME namenode-2.vnet
 ENV HADOOP_QJOURNAL_ADDRESS   journalnode-1.vnet:8485;journalnode-2.vnet:8485;journalnode-3.vnet:8485
 ENV HADOOP_DFS_REPLICATION    3
 ENV YARN_RESOURCEMANAGER_HOSTNAME resourcemanager-1.vnet
+ENV MAPRED_JOBHISTORY_HOSTNAME    historyserver-1.vnet
 
 ## default memory/cpu setting
 ENV HADOOP_HEAPSIZE              1000
@@ -81,7 +82,8 @@ RUN apk --no-cache add \
         ${HADOOP_TMP_DIR}/nm-local-dir \
         ${HADOOP_TMP_DIR}/yarn-nm-recovery \
         ${YARN_LOG_DIR} \
-    && chown -R mapred:hadoop ${HADOOP_TMP_DIR}/mapred  \
+    && chown -R mapred:hadoop \
+        ${HADOOP_TMP_DIR}/mapred  \
     # remove unnecessary doc/src files 
     && rm -rf ${HADOOP_HOME}/share/doc \
     && for dir in common hdfs mapreduce tools yarn; do \
@@ -91,14 +93,16 @@ RUN apk --no-cache add \
     && rm -rf ${HADOOP_HOME}/share/hadoop/mapreduce/lib-examples \
     && rm -rf ${HADOOP_HOME}/share/hadoop/yarn/test \
     && find ${HADOOP_HOME}/share/hadoop -name *test*.jar | xargs rm -rf \
-    # remove heavy unused lib
-    && rm -rf ${HADOOP_HOME}/share/hadoop/httpfs \
-    && rm -rf ${HADOOP_HOME}/share/hadoop/kms
+    && rm -rf ${HADOOP_HOME}/lib/native
 
+# RUN set -x \
+#     && wget -q -O - https://dl.gliderlabs.com/sigil/latest/$(uname -sm|tr \  _).tgz \
+#     | tar -xzf - -C /usr/local/bin
+    
 COPY etc/*  ${HADOOP_CONF_DIR}/
 COPY bin/*  /usr/local/bin/
 COPY lib/*  /usr/local/lib/
-        
+       
 WORKDIR ${HADOOP_COMMON_HOME}
 
 VOLUME ["${HADOOP_TMP_DIR}", "${HADOOP_LOG_DIR}", "${YARN_LOG_DIR}"]
