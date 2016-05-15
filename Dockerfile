@@ -36,6 +36,10 @@ ENV YARN_APPMASTER_MEMORY_MB     1536
 ENV MAPRED_MAP_MEMORY_MB         1024
 ENV MAPRED_REDUCE_MEMORY_MB      1024
 
+## HDFS path
+ENV YARN_REMOTE_APP_LOG_DIR      /tmp/logs
+ENV YARN_APP_MAPRED_STAGING_DIR  /tmp/hadoop-yarn/staging
+
 RUN apk --no-cache add \
     bash \
     su-exec \

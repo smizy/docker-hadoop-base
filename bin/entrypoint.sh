@@ -59,22 +59,49 @@ elif [ "$1" == "namenode-2" ]; then
 elif [ "$1" == "datanode" ]; then
     exec su-exec hdfs hdfs datanode
        
-elif [ "$1" == "resourcemanager" ]; then
+elif [ "$1" == "resourcemanager-1" ]; then
     exec su-exec yarn yarn resourcemanager
 
 elif [ "$1" == "nodemanager" ]; then
+    wait_until ${YARN_RESOURCEMANAGER_HOSTNAME} 8031
     exec su-exec yarn yarn nodemanager
     
-elif [ "$1" == "historyserver" ]; then
+elif [ "$1" == "historyserver-1" ]; then
     
     wait_until ${HADOOP_NAMENODE1_HOSTNAME} 8020 
+
+    set +e -x
     
-    su-exec hdfs hdfs dfs -mkdir -p /tmp/hadoop-yarn/staging/history
-    su-exec hdfs hdfs dfs -chmod -R 1777 /tmp
-    su-exec hdfs hdfs dfs -chown -R mapred:hadoop /tmp/hadoop-yarn
-    su-exec mapred hdfs dfs -mkdir -p /tmp/hadoop-yarn/apps
-           
-    exec su-exec mapred mapred historyserver    
+    su-exec hdfs hdfs dfs -ls /tmp > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        su-exec hdfs hdfs dfs -mkdir -p /tmp
+        su-exec hdfs hdfs dfs -chmod 1777 /tmp
+    fi
+    
+    su-exec hdfs hdfs dfs -ls /user > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        su-exec hdfs hdfs dfs -mkdir -p /user
+        su-exec hdfs hdfs dfs -chmod 755 /user
+    fi
+    
+    su-exec hdfs hdfs dfs -ls ${YARN_REMOTE_APP_LOG_DIR} > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        su-exec yarn hdfs dfs -mkdir -p ${YARN_REMOTE_APP_LOG_DIR}
+        su-exec yarn hdfs dfs -chmod -R 1777 ${YARN_REMOTE_APP_LOG_DIR}
+        su-exec yarn hdfs dfs -chown -R yarn:hadoop ${YARN_REMOTE_APP_LOG_DIR}
+    fi
+    
+    su-exec hdfs hdfs dfs -ls ${YARN_APP_MAPRED_STAGING_DIR} > /dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        su-exec mapred hdfs dfs -mkdir -p ${YARN_APP_MAPRED_STAGING_DIR}
+        su-exec mapred hdfs dfs -chmod -R 1777 ${YARN_APP_MAPRED_STAGING_DIR}
+        su-exec mapred hdfs dfs -chown -R mapred:hadoop ${YARN_APP_MAPRED_STAGING_DIR}
+    fi
+    
+    set -e +x 
+            
+    exec su-exec mapred mapred historyserver
+       
 fi
 
 exec "$@"
