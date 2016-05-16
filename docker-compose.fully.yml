@@ -91,14 +91,14 @@ services:
       file: docker-compose.yml
       service: resourcemanager-1  
     environment:
-      - "constraint:node==manager-*"
+      - "constraint:node==manager-3"
   
   historyserver-1:
     extends: 
       file: docker-compose.yml
       service: historyserver-1  
     environment:
-      - "constraint:node==manager-*"
+      - "constraint:node==manager-3"
         
   nodemanager-1:
     extends: 

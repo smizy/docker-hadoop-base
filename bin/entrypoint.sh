@@ -80,7 +80,7 @@ elif [ "$1" == "historyserver-1" ]; then
     
     su-exec hdfs hdfs dfs -ls /user > /dev/null 2>&1
     if [ $? -ne 0 ]; then
-        su-exec hdfs hdfs dfs -mkdir -p /user
+        su-exec hdfs hdfs dfs -mkdir -p /user/hdfs
         su-exec hdfs hdfs dfs -chmod 755 /user
     fi
     

@@ -39,7 +39,7 @@ services:
     networks: ["vnet"]
     hostname: journalnode-1.vnet
     image: smizy/hadoop-base:2.7.2-alpine
-    expose: [8480, 8485]
+    expose: ["8480", "8485"]
     environment:
       - SERVICE_8485_NAME=journalnode
       - SERVICE_8480_IGNORE=true
@@ -51,7 +51,7 @@ services:
     networks: ["vnet"]
     hostname: journalnode-2.vnet
     image: smizy/hadoop-base:2.7.2-alpine
-    expose: [8480, 8485]
+    expose: ["8480", "8485"]
     environment:
       - SERVICE_8485_NAME=journalnode
       - SERVICE_8480_IGNORE=true
@@ -63,7 +63,7 @@ services:
     networks: ["vnet"]
     hostname: journalnode-3.vnet
     image: smizy/hadoop-base:2.7.2-alpine
-    expose: [8480, 8485]
+    expose: ["8480", "8485"]
     environment:
       - SERVICE_8485_NAME=journalnode
       - SERVICE_8480_IGNORE=true
@@ -75,7 +75,8 @@ services:
     networks: ["vnet"]
     hostname: namenode-1.vnet
     image: smizy/hadoop-base:2.7.2-alpine 
-    expose: [8020, 50070]
+    expose: ["50070"]
+    ports:  ["8020"]
     environment:
       - SERVICE_8020_NAME=namenode
       - SERVICE_50070_IGNORE=true
@@ -87,7 +88,8 @@ services:
     networks: ["vnet"]
     hostname: namenode-2.vnet
     image: smizy/hadoop-base:2.7.2-alpine 
-    expose: [8020, 50070]
+    expose: ["50070"]
+    ports:  ["8020"]
     environment:
       - SERVICE_8020_NAME=namenode
       - SERVICE_50070_IGNORE=true   
@@ -99,7 +101,7 @@ services:
     networks: ["vnet"]
     hostname: datanode-1.vnet
     image: smizy/hadoop-base:2.7.2-alpine
-    expose: [50010, 50020, 50075]
+    expose: ["50010", "50020", "50075"]
     environment:
       - SERVICE_50010_NAME=datanode
       - SERVICE_50020_IGNORE=true
@@ -112,7 +114,7 @@ services:
     networks: ["vnet"]
     hostname: datanode-2.vnet
     image: smizy/hadoop-base:2.7.2-alpine
-    expose: [50010, 50020, 50075]
+    expose: ["50010", "50020", "50075"]
     environment:
       - SERVICE_50010_NAME=datanode
       - SERVICE_50020_IGNORE=true
@@ -125,7 +127,7 @@ services:
     networks: ["vnet"]
     hostname: datanode-2.vnet
     image: smizy/hadoop-base:2.7.2-alpine
-    expose: [50010, 50020, 50075]
+    expose: ["50010", "50020", "50075"]
     environment:
       - SERVICE_50010_NAME=datanode
       - SERVICE_50020_IGNORE=true
