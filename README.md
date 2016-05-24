@@ -27,6 +27,12 @@ eval $(docker-machine env default)
 # network 
 docker network create vnet
 
+# make docker-compose.yml with pseudo hdfs, yarn services
+env $(grep -v ^# pseudo.env ) ./make_docker_compose_file.sh hdfs yarn > docker-compose.yml
+
+# config test
+docker-compose config
+
 # hadoop startup (zookeeper, journalnode, namenode, datanode, resouremanager, nodemanager, historyserver)
 docker-compose up -d
 
@@ -133,11 +139,20 @@ eval $(docker-machine env --swarm manager-1)
 # create overlay network
 docker $(docker-machine config manager-1) network create -d overlay vnet
 
+# make docker-compose.yml with multihost(distributed) hdfs, yarn services
+env $(grep -v ^# multihost.env ) ./make_docker_compose_file.sh hdfs yarn > docker-compose.yml
+
+# config test
+docker-compose config
+
 # hadoop startup (zookeeper, journalnode, namenode, datanode, resouremanager, nodemanager, historyserver)
-docker-compose -f docker-compose.fully.yml up -d
+docker-compose up -d
+
+# tail logs for a while
+docker-compose logs -f
 
 # check ps
-docker-compose -f docker-compose.fully.yml ps
+docker-compose ps
 
 # check consul ui
 open http://$(docker-machine ip manager-1):8500/ui
@@ -164,9 +179,9 @@ docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapr
 docker exec -it -u hdfs datanode-1 hdfs dfs -cat output2/*
 
 # hadoop shutdown  
-docker-compose -f docker-compose.fully.yml stop
+docker-compose stop
 
 # cleanup container
-docker-compose -f docker-compose.fully.yml rm 
+docker-compose rm 
 
 ```
