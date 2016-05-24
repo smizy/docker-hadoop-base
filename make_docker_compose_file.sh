@@ -50,7 +50,7 @@ for component in $@; do
         debug $k $KK
         
         scale_size=${!k}
-        debug $kk scale_size: $scale_size
+        debug $KK scale_size: $scale_size
         
         for i in `seq 1 ${scale_size}`; do 
             swarm_filter="SWARM_FILTER_${KK}_${i}" 
