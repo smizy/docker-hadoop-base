@@ -107,8 +107,8 @@ COPY etc/*  ${HADOOP_CONF_DIR}/
 COPY bin/*  /usr/local/bin/
 COPY lib/*  /usr/local/lib/
        
-WORKDIR ${HADOOP_COMMON_HOME}
+WORKDIR ${HADOOP_HOME}
 
-VOLUME ["${HADOOP_TMP_DIR}", "${HADOOP_LOG_DIR}", "${YARN_LOG_DIR}"]
+VOLUME ["${HADOOP_TMP_DIR}", "${HADOOP_LOG_DIR}", "${YARN_LOG_DIR}", "${HADOOP_HOME}"]
 
 ENTRYPOINT ["entrypoint.sh"]
