@@ -1,7 +1,7 @@
 FROM java:8-jre-alpine
 MAINTAINER smizy
 
-ENV HADOOP_VERSION      2.7.2
+ENV HADOOP_VERSION      2.7.3
 ENV HADOOP_PREFIX       /usr/local/hadoop-${HADOOP_VERSION}
 ENV HADOOP_HOME         ${HADOOP_PREFIX}
 ENV HADOOP_COMMON_HOME  ${HADOOP_PREFIX}
@@ -60,10 +60,10 @@ RUN apk --no-cache add \
     && sed -i 's@${JAVA_HOME}@'${JAVA_HOME}'@g' ${HADOOP_CONF_DIR}/hadoop-env.sh \     
     # user/dir/permission
     && adduser -D -g '' -s /sbin/nologin -u 1000 docker \
-    && for user in hadoop hdfs yarn mapred; do \
+    && for user in hadoop hdfs yarn mapred hbase; do \
          adduser -D -g '' -s /sbin/nologin ${user}; \
        done \
-    && for user in root hdfs yarn mapred docker; do \
+    && for user in root hdfs yarn mapred hbase docker; do \
          adduser ${user} hadoop; \
        done \      
     && mkdir -p \

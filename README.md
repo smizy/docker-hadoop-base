@@ -1,6 +1,6 @@
 # docker-hadoop-base
 
-[![](https://imagelayers.io/badge/smizy/hadoop-base:2.7.2-alpine.svg)](https://imagelayers.io/?images=smizy/hadoop-base:2.7.2-alpine 'Get your own badge on imagelayers.io')
+[![](https://imagelayers.io/badge/smizy/hadoop-base:2.7.3-alpine.svg)](https://imagelayers.io/?images=smizy/hadoop-base:2.7.3-alpine 'Get your own badge on imagelayers.io')
 
 Hadoop(Common/HDFS/YARN/MapReduce) docker image based on jre-8:alpine
 
@@ -14,14 +14,14 @@ Hadoop(Common/HDFS/YARN/MapReduce) docker image based on jre-8:alpine
 This setup use FQDN with docker embedded DNS instead of editing /etc/hosts. 
 Using FQDN on Hadoop require dns lookup and reverse lookup. 
 
-So, you need set --name and --net (container_name.network_name as hostname) for dns lookup from other containers 
+You need set --name and --net (container_name.network_name as hostname) for dns lookup from other containers 
 , and set --hostname(-h) for reverse lookup from container itself.
 
 
 ## setup pseudo-distributed hadoop cluster on a single docker host  
 
 ```
-# load default env
+# load default env as needed
 eval $(docker-machine env default)
 
 # network 
@@ -46,7 +46,7 @@ docker-compose ps
 docker ps --format {{.Names}} | xargs docker stats
 
 # run example data (pi calc)
-docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar pi 10 10
+docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar pi 10 10
 
 # view job history in web ui
 open http://$(docker-machine ip default):19888
@@ -55,12 +55,12 @@ open http://$(docker-machine ip default):19888
 docker-compose stop
 
 # cleanup container
-docker-compose rm 
+docker-compose rm -v
 
 ```
 
 
-## setup fully-distributed hadoop cluster on a swarm cluster 
+## setup fully-distributed hadoop cluster on a swarm(v1.11) cluster 
 
 * create 6 docker hosts. manager-1, manager-2, manager-3, node-d-1, node-d-2, node-d-3
 * need 3G total memory (each 512MB)
@@ -164,24 +164,24 @@ docker ps --format {{.Names}} | xargs docker stats
 docker ps --format {{.Names}} | grep -Ev 'consul|registrator'  | xargs docker stats
   
 # run example (pi calc)
-docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar pi 10 10
+docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar pi 10 10
 
 # prepare sample data
 docker exec -it -u hdfs datanode-1 hdfs dfs -put etc/hadoop input
 docker exec -it -u hdfs datanode-1 hdfs dfs -ls /user/hdfs/input
 
 # run example (grep count)
-docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar grep input output 'dfs[a-z.]+'
+docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar grep input output 'dfs[a-z.]+'
 docker exec -it -u hdfs datanode-1 hdfs dfs -cat output/*
 
 # run example (word count)
-docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar wordcount input/hadoop-env.sh output2
+docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar wordcount input/hadoop-env.sh output2
 docker exec -it -u hdfs datanode-1 hdfs dfs -cat output2/*
 
 # hadoop shutdown  
 docker-compose stop
 
 # cleanup container
-docker-compose rm 
+docker-compose rm -v
 
 ```
