@@ -1,6 +1,7 @@
 # docker-hadoop-base
 
-[![](https://imagelayers.io/badge/smizy/hadoop-base:2.7.3-alpine.svg)](https://imagelayers.io/?images=smizy/hadoop-base:2.7.3-alpine 'Get your own badge on imagelayers.io')
+[![](https://images.microbadger.com/badges/image/smizy/hadoop-base:2.7.3-alpine.svg)](http://microbadger.com/images/smizy/hadoop-base:2.7.3-alpine "Get your own image badge on microbadger.com")
+[![](https://images.microbadger.com/badges/version/smizy/hadoop-base:2.7.3-alpine.svg)](http://microbadger.com/images/smizy/hadoop-base:2.7.3-alpine "Get your own image badge on microbadger.com")
 
 Hadoop(Common/HDFS/YARN/MapReduce) docker image based on alpine
 
