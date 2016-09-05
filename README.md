@@ -2,7 +2,7 @@
 
 [![](https://imagelayers.io/badge/smizy/hadoop-base:2.7.3-alpine.svg)](https://imagelayers.io/?images=smizy/hadoop-base:2.7.3-alpine 'Get your own badge on imagelayers.io')
 
-Hadoop(Common/HDFS/YARN/MapReduce) docker image based on jre-8:alpine
+Hadoop(Common/HDFS/YARN/MapReduce) docker image based on alpine
 
 * Namenode is set to high availability mode
 * Non secure mode

@@ -1,4 +1,4 @@
-FROM java:8-jre-alpine
+FROM alpine:3.4
 MAINTAINER smizy
 
 ENV HADOOP_VERSION      2.7.3
@@ -14,7 +14,9 @@ ENV HADOOP_TMP_DIR      /hadoop
 ENV YARN_CONF_DIR       ${HADOOP_PREFIX}/etc/hadoop
 ENV YARN_HOME           ${HADOOP_PREFIX}
 ENV YARN_LOG_DIR        /var/log/yarn
-ENV PATH                $PATH:${HADOOP_PREFIX}/sbin:${HADOOP_PREFIX}/bin
+
+ENV JAVA_HOME   /usr/lib/jvm/default-jvm
+ENV PATH        $PATH:${JAVA_HOME}/bin:${HADOOP_PREFIX}/sbin:${HADOOP_PREFIX}/bin
 
 ENV HADOOP_CLUSTER_NAME       hadoop
 ENV HADOOP_ZOOKEEPER_QUORUM   zookeeper-1.vnet:2181,zookeeper-2.vnet:2181,zookeeper-3.vnet:2181
@@ -42,6 +44,7 @@ ENV YARN_APP_MAPRED_STAGING_DIR  /tmp/hadoop-yarn/staging
 
 RUN apk --no-cache add \
     bash \
+    openjdk8-jre \
     su-exec \
     # download
     && set -x \
@@ -99,9 +102,6 @@ RUN apk --no-cache add \
     && find ${HADOOP_HOME}/share/hadoop -name *test*.jar | xargs rm -rf \
     && rm -rf ${HADOOP_HOME}/lib/native
 
-# RUN set -x \
-#     && wget -q -O - https://dl.gliderlabs.com/sigil/latest/$(uname -sm|tr \  _).tgz \
-#     | tar -xzf - -C /usr/local/bin
     
 COPY etc/*  ${HADOOP_CONF_DIR}/
 COPY bin/*  /usr/local/bin/
