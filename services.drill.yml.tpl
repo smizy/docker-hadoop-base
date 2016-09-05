@@ -7,7 +7,7 @@ services:
     container_name: drillbit-${i}
     networks: ["${network_name}"]
     hostname: drillbit-${i}.${network_name}
-    image: smizy/apache-drill:1.7-alpine
+    image: smizy/apache-drill:1.8-alpine
     ports: 
       - 8047
     environment:
