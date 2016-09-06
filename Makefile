@@ -19,5 +19,5 @@ runtime:
 test:
 	(docker network ls | grep vnet ) || docker network create vnet
 	docker-compose up -d
-	docker run -it --rm --net vnet --volumes-from historyserver-1 smizy/hadoop-base:2.7.3-alpine  bash -c 'for i in $$(seq 80); do nc -z historyserver-1.vnet 19888 && break; echo -n .; sleep 1; done; echo'
+	docker run --net vnet --volumes-from historyserver-1 smizy/hadoop-base:2.7.3-alpine  bash -c 'for i in $$(seq 200); do nc -z historyserver-1.vnet 19888 && echo test starting && break; echo -n .; sleep 1; [ $$i -ge 200 ] && echo timeout && exit 124 ; done'
 	bats test/test_*.bats
