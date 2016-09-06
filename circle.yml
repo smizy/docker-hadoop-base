@@ -8,7 +8,7 @@ machine:
     TAG: ${VERSION}-alpine
     TAG_SHORT: 2.7-alpine
     BATS_VER: 0.4.0
-    _JAVA_OPTIONS: "-Xmx768m"
+    _JAVA_OPTIONS: "-Xmx649m"
   services: 
     - docker
   pre:
