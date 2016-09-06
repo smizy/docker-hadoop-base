@@ -1,7 +1,21 @@
 FROM alpine:3.4
 MAINTAINER smizy
 
-ENV HADOOP_VERSION      2.7.3
+ARG BUILD_DATE
+ARG VCS_REF
+ARG VERSION
+
+LABEL \
+    org.label-schema.build-date=$BUILD_DATE \
+    org.label-schema.docker.dockerfile="/Dockerfile" \
+    org.label-schema.license="Apache License 2.0" \
+    org.label-schema.name="smizy/hadoop-base" \
+    org.label-schema.url="https://github.com/smizy" \
+    org.label-schema.vcs-ref=$VCS_REF \
+    org.label-schema.vcs-type="Git" \
+    org.label-schema.vcs-url="https://github.com/smizy/docker-hadoop-base"
+
+ENV HADOOP_VERSION      $VERSION
 ENV HADOOP_PREFIX       /usr/local/hadoop-${HADOOP_VERSION}
 ENV HADOOP_HOME         ${HADOOP_PREFIX}
 ENV HADOOP_COMMON_HOME  ${HADOOP_PREFIX}
