@@ -8,7 +8,8 @@ machine:
     TAG: ${VERSION}-alpine
     TAG_SHORT: 2.7-alpine
     BATS_VER: 0.4.0
-  services:
+    _JAVA_OPTIONS: "-Xmx768m"
+  services: 
     - docker
   pre:
     - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
