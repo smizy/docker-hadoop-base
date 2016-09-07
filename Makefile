@@ -25,7 +25,4 @@ test:
 	docker-compose -f docker-compose.ci.yml.tmp up -d 
 	docker run --net vnet --volumes-from historyserver-1 smizy/hadoop-base:${VERSION}-alpine  bash -c 'for i in $$(seq 200); do nc -z historyserver-1.vnet 19888 && echo test starting && break; echo -n .; sleep 1; [ $$i -ge 200 ] && echo timeout && exit 124 ; done'
 	bats test/test_*.bats
-	# cleanup
 	docker-compose -f docker-compose.ci.yml.tmp stop
-	docker-compose -f docker-compose.ci.yml.tmp rm -fv
-	docker ps -aq --filter status=exited | xargs docker rm -fv
