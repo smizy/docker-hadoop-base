@@ -12,7 +12,7 @@ runtime:
 		--build-arg BUILD_DATE=${BUILD_DATE} \
 		--build-arg VCS_REF=${VCS_REF} \
 		--build-arg VERSION=${VERSION} \
-		--rm -t smizy/hadoop-base:${TAG} .
+		-t smizy/hadoop-base:${TAG} .
 	docker images | grep hadoop-base
 
 .PHONY: test
