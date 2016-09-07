@@ -13,7 +13,7 @@ services:
       - SERVICE_8485_NAME=journalnode
       - SERVICE_8480_IGNORE=true
       - HADOOP_ZOOKEEPER_QUORUM=${ZOOKEEPER_QUORUM} 
-      - HADOOP_HEAP=1000
+      - HADOOP_HEAPSIZE=1000
       ${SWARM_FILTER_JOURNALNODE_${i}}
     command: journalnode
 ##/ journalnode
@@ -30,7 +30,7 @@ services:
       - SERVICE_8020_NAME=namenode
       - SERVICE_50070_IGNORE=true
       - HADOOP_ZOOKEEPER_QUORUM=${ZOOKEEPER_QUORUM} 
-      - HADOOP_HEAP=1000
+      - HADOOP_HEAPSIZE=1000
       ${SWARM_FILTER_NAMENODE_${i}}
     entrypoint: entrypoint.sh
     command: namenode-${i}
@@ -48,7 +48,7 @@ services:
       - SERVICE_50020_IGNORE=true
       - SERVICE_50075_IGNORE=true
       - HADOOP_ZOOKEEPER_QUORUM=${ZOOKEEPER_QUORUM} 
-      - HADOOP_HEAP=1000
+      - HADOOP_HEAPSIZE=1000
       ${SWARM_FILTER_DATANODE_${i}}
     entrypoint: entrypoint.sh
     command: datanode
