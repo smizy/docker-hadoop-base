@@ -206,7 +206,6 @@ services:
       - SERVICE_8041_IGNORE=true
       - HADOOP_ZOOKEEPER_QUORUM=zookeeper-1.vnet:2181,zookeeper-2.vnet:2181,zookeeper-3.vnet:2181 
       - YARN_HEAPSIZE=1000
-      - YARN_APPMASTER_COMMAND_OPTS=-Xmx1024m
       
     entrypoint: entrypoint.sh
     command: nodemanager
@@ -223,7 +222,6 @@ services:
       - SERVICE_8041_IGNORE=true
       - HADOOP_ZOOKEEPER_QUORUM=zookeeper-1.vnet:2181,zookeeper-2.vnet:2181,zookeeper-3.vnet:2181 
       - YARN_HEAPSIZE=1000
-      - YARN_APPMASTER_COMMAND_OPTS=-Xmx1024m
       
     entrypoint: entrypoint.sh
     command: nodemanager
@@ -240,7 +238,6 @@ services:
       - SERVICE_8041_IGNORE=true
       - HADOOP_ZOOKEEPER_QUORUM=zookeeper-1.vnet:2181,zookeeper-2.vnet:2181,zookeeper-3.vnet:2181 
       - YARN_HEAPSIZE=1000
-      - YARN_APPMASTER_COMMAND_OPTS=-Xmx1024m
       
     entrypoint: entrypoint.sh
     command: nodemanager

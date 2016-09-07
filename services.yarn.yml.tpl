@@ -54,7 +54,6 @@ services:
       - SERVICE_8041_IGNORE=true
       - HADOOP_ZOOKEEPER_QUORUM=${ZOOKEEPER_QUORUM} 
       - YARN_HEAPSIZE=1000
-      - YARN_APPMASTER_COMMAND_OPTS=-Xmx1024m
       ${SWARM_FILTER_NODEMANAGER_${i}}
     entrypoint: entrypoint.sh
     command: nodemanager
