@@ -39,7 +39,7 @@ deployment:
     branch: master
     owner: smizy
     commands:
-      - docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
       - docker tag smizy/hadoop-base:${TAG} smizy/hadoop-base
       - docker tag smizy/hadoop-base:${TAG} smizy/hadoop-base:${TAG_SHORT}
       - docker push smizy/hadoop-base:${TAG}
