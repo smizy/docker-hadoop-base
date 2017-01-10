@@ -1,4 +1,4 @@
-FROM alpine:3.4
+FROM alpine:3.5
 MAINTAINER smizy
 
 ARG BUILD_DATE
@@ -17,7 +17,7 @@ LABEL \
 
 ENV HADOOP_VERSION      $VERSION
 ENV HADOOP_PREFIX       /usr/local/hadoop-${HADOOP_VERSION}
-ENV HADOOP_HOME         ${HADOOP_PREFIX}
+# ENV HADOOP_HOME         ${HADOOP_PREFIX}
 ENV HADOOP_COMMON_HOME  ${HADOOP_PREFIX}
 ENV HADOOP_HDFS_HOME    ${HADOOP_PREFIX}
 ENV HADOOP_MAPRED_HOME  ${HADOOP_PREFIX}
@@ -58,9 +58,9 @@ ENV YARN_REMOTE_APP_LOG_DIR      /tmp/logs
 ENV YARN_APP_MAPRED_STAGING_DIR  /tmp/hadoop-yarn/staging
 
 RUN apk --no-cache add \
-    bash \
-    openjdk8-jre \
-    su-exec \
+        bash \
+        openjdk8-jre \
+        su-exec \
     # download
     && set -x \
     && mirror_url=$( \
@@ -75,7 +75,7 @@ RUN apk --no-cache add \
        | sed 's/^/export /g' \
        > ~/.profile \
     && cp ~/.profile /etc/profile.d/hadoop \
-    && sed -i 's@${JAVA_HOME}@'${JAVA_HOME}'@g' ${HADOOP_CONF_DIR}/hadoop-env.sh \     
+    && sed -i 's@${JAVA_HOME}@'${JAVA_HOME}'@g' ${HADOOP_CONF_DIR}/hadoop-env.sh \
     # user/dir/permission
     && adduser -D -g '' -s /sbin/nologin -u 1000 docker \
     && for user in hadoop hdfs yarn mapred hbase; do \
@@ -107,23 +107,23 @@ RUN apk --no-cache add \
     && chown -R mapred:hadoop \
         ${HADOOP_TMP_DIR}/mapred  \
     # remove unnecessary doc/src files 
-    && rm -rf ${HADOOP_HOME}/share/doc \
+    && rm -rf ${HADOOP_PREFIX}/share/doc \
     && for dir in common hdfs mapreduce tools yarn; do \
-         rm -rf ${HADOOP_HOME}/share/hadoop/${dir}/sources; \
+         rm -rf ${HADOOP_PREFIX}/share/hadoop/${dir}/sources; \
        done \
-    && rm -rf ${HADOOP_HOME}/share/hadoop/common/jdiff \
-    && rm -rf ${HADOOP_HOME}/share/hadoop/mapreduce/lib-examples \
-    && rm -rf ${HADOOP_HOME}/share/hadoop/yarn/test \
-    && find ${HADOOP_HOME}/share/hadoop -name *test*.jar | xargs rm -rf \
-    && rm -rf ${HADOOP_HOME}/lib/native
+    && rm -rf ${HADOOP_PREFIX}/share/hadoop/common/jdiff \
+    && rm -rf ${HADOOP_PREFIX}/share/hadoop/mapreduce/lib-examples \
+    && rm -rf ${HADOOP_PREFIX}/share/hadoop/yarn/test \
+    && find ${HADOOP_PREFIX}/share/hadoop -name *test*.jar | xargs rm -rf \
+    && rm -rf ${HADOOP_PREFIX}/lib/native
 
     
 COPY etc/*  ${HADOOP_CONF_DIR}/
 COPY bin/*  /usr/local/bin/
 COPY lib/*  /usr/local/lib/
        
-WORKDIR ${HADOOP_HOME}
+WORKDIR ${HADOOP_PREFIX}
 
-VOLUME ["${HADOOP_TMP_DIR}", "${HADOOP_LOG_DIR}", "${YARN_LOG_DIR}", "${HADOOP_HOME}"]
+VOLUME ["${HADOOP_TMP_DIR}", "${HADOOP_LOG_DIR}", "${YARN_LOG_DIR}", "${HADOOP_PREFIX}"]
 
 ENTRYPOINT ["entrypoint.sh"]

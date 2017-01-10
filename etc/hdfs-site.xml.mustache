@@ -27,32 +27,38 @@
         <name>dfs.nameservices</name>
         <value>{{HADOOP_CLUSTER_NAME}}</value>
     </property>
-    
+
+     <property>
+        <name>dfs.replication</name>
+        <value>{{HADOOP_DFS_REPLICATION}}</value>
+    </property>
+
+{{#HADOOP_NAMENODE_HA}}
     <property>
         <name>dfs.ha.namenodes.{{HADOOP_CLUSTER_NAME}}</name>
-        <value>nn1,nn2</value>
+        <value>{{HADOOP_NAMENODE_HA}}</value>
     </property> 
     
     <property>
         <name>dfs.namenode.rpc-address.{{HADOOP_CLUSTER_NAME}}.nn1</name>
-        <value>{{HADOOP_NAMENODE1_HOSTNAME}}:8020</value>
-    </property>
-    
-    <property>
-        <name>dfs.namenode.rpc-address.{{HADOOP_CLUSTER_NAME}}.nn2</name>
-        <value>{{HADOOP_NAMENODE2_HOSTNAME}}:8020</value>
+        <value>{{HADOOP_NAMENODE1_HOSTNAME}}:9820</value>
     </property>
 
     <property>
         <name>dfs.namenode.http-address.{{HADOOP_CLUSTER_NAME}}.nn1</name>
-        <value>{{HADOOP_NAMENODE1_HOSTNAME}}:50070</value>
+        <value>{{HADOOP_NAMENODE1_HOSTNAME}}:9870</value>
     </property>
-    
+
+    <property>
+        <name>dfs.namenode.rpc-address.{{HADOOP_CLUSTER_NAME}}.nn2</name>
+        <value>{{HADOOP_NAMENODE2_HOSTNAME}}:9820</value>
+    </property>
+
     <property>
         <name>dfs.namenode.http-address.{{HADOOP_CLUSTER_NAME}}.nn2</name>
-        <value>{{HADOOP_NAMENODE2_HOSTNAME}}:50070</value>
-    </property>     
-        
+        <value>{{HADOOP_NAMENODE2_HOSTNAME}}:9870</value>
+    </property> 
+
     <property>
         <name>dfs.namenode.shared.edits.dir</name>
         <value>qjournal://{{HADOOP_QJOURNAL_ADDRESS}}/{{HADOOP_CLUSTER_NAME}}</value>
@@ -74,14 +80,23 @@
     </property>
 
     <property>
-        <name>dfs.replication</name>
-        <value>{{HADOOP_DFS_REPLICATION}}</value>
-    </property>
-
-    <property>
         <name>dfs.ha.automatic-failover.enabled</name>
         <value>true</value>
     </property>
-        
+
+{{/HADOOP_NAMENODE_HA}}
+
+{{^HADOOP_NAMENODE_HA}}
+    <property>
+        <name>dfs.namenode.rpc-address.{{HADOOP_CLUSTER_NAME}}</name>
+        <value>{{HADOOP_NAMENODE1_HOSTNAME}}:9820</value>
+    </property>
+    
+    <property>
+        <name>dfs.namenode.http-address.{{HADOOP_CLUSTER_NAME}}</name>
+        <value>{{HADOOP_NAMENODE1_HOSTNAME}}:9870</value>
+    </property>
+{{/HADOOP_NAMENODE_HA}}
+
 
 </configuration>

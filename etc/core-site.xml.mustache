@@ -19,7 +19,8 @@
 <configuration>
     <property>
         <name>fs.defaultFS</name>
-        <value>hdfs://{{HADOOP_CLUSTER_NAME}}</value>
+        {{#HADOOP_NAMENODE_HA}}<value>hdfs://{{HADOOP_CLUSTER_NAME}}</value>{{/HADOOP_NAMENODE_HA}}
+        {{^HADOOP_NAMENODE_HA}}<value>hdfs://{{HADOOP_NAMENODE1_HOSTNAME}}:9820</value>{{/HADOOP_NAMENODE_HA}}
     </property>
   
     <property>
