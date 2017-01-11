@@ -30,7 +30,7 @@ eval $(docker-machine env default)
 docker network create vnet
 
 # make docker-compose.yml 
-namenode=1 datanode=1 ./make_docker_compose_file.sh hdfs yarn > docker-compose.yml
+zookeeper=1 namenode=1 datanode=1 ./make_docker_compose_file.sh hdfs yarn > docker-compose.yml
 
 # config test
 docker-compose config
@@ -43,6 +43,15 @@ docker-compose logs -f
 
 # check ps
 docker-compose ps
+
+      Name                     Command               State                                Ports                              
+----------------------------------------------------------------------------------------------------------------------------
+datanode-1          entrypoint.sh datanode           Up      9864/tcp, 9866/tcp, 9867/tcp                                    
+historyserver-1     entrypoint.sh historyserver-1    Up      10020/tcp, 0.0.0.0:19888->19888/tcp                             
+namenode-1          entrypoint.sh namenode-1         Up      9820/tcp, 0.0.0.0:32817->9870/tcp                               
+nodemanager-1       entrypoint.sh nodemanager        Up      8040/tcp, 8041/tcp, 8042/tcp                                    
+resourcemanager-1   entrypoint.sh resourcemana ...   Up      8030/tcp, 8031/tcp, 8032/tcp, 8033/tcp, 0.0.0.0:32818->8088/tcp 
+zookeeper-1         entrypoint.sh -server 1 1 vnet   Up      2181/tcp, 2888/tcp, 3888/tcp
 
 # check stats
 docker ps --format {{.Names}} | xargs docker stats
