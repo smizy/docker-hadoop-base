@@ -41,6 +41,11 @@
         <name>mapreduce.jobhistory.webapp.address</name>
         <value>{{MAPRED_JOBHISTORY_HOSTNAME}}:19888</value>
     </property> 
+
+    <property>
+        <name>mapred.child.java.opts</name>
+        <value>{{MAPRED_CHILD_JAVA_OPTS}}</value>
+    </property>
     
     <property>
         <name>yarn.app.mapreduce.am.staging-dir</name>

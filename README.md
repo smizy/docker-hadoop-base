@@ -48,7 +48,7 @@ docker-compose ps
 docker ps --format {{.Names}} | xargs docker stats
 
 # run example data (pi calc)
-docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.0.0-alpha1.jar pi 3 10
+docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.0.0-alpha1.jar pi 10 100
 
 # view job history in web ui
 open http://$(docker-machine ip default):19888

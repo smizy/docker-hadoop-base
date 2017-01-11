@@ -15,22 +15,21 @@ LABEL \
     org.label-schema.vcs-type="Git" \
     org.label-schema.vcs-url="https://github.com/smizy/docker-hadoop-base"
 
-ENV HADOOP_VERSION      $VERSION
-ENV HADOOP_PREFIX       /usr/local/hadoop-${HADOOP_VERSION}
-# ENV HADOOP_HOME         ${HADOOP_PREFIX}
-ENV HADOOP_COMMON_HOME  ${HADOOP_PREFIX}
-ENV HADOOP_HDFS_HOME    ${HADOOP_PREFIX}
-ENV HADOOP_MAPRED_HOME  ${HADOOP_PREFIX}
-ENV HADOOP_YARN_HOME    ${HADOOP_PREFIX}
-ENV HADOOP_CONF_DIR     ${HADOOP_PREFIX}/etc/hadoop 
+ENV HADOOP_VERSION      $VERSION      
+ENV HADOOP_HOME         /usr/local/hadoop-${HADOOP_VERSION}
+ENV HADOOP_COMMON_HOME  ${HADOOP_HOME}
+ENV HADOOP_HDFS_HOME    ${HADOOP_HOME}
+ENV HADOOP_MAPRED_HOME  ${HADOOP_HOME}
+ENV HADOOP_YARN_HOME    ${HADOOP_HOME}
+ENV HADOOP_CONF_DIR     ${HADOOP_HOME}/etc/hadoop 
 ENV HADOOP_LOG_DIR      /var/log/hdfs
 ENV HADOOP_TMP_DIR      /hadoop
-ENV YARN_CONF_DIR       ${HADOOP_PREFIX}/etc/hadoop
-ENV YARN_HOME           ${HADOOP_PREFIX}
+ENV YARN_CONF_DIR       ${HADOOP_HOME}/etc/hadoop
+ENV YARN_HOME           ${HADOOP_HOME}
 ENV YARN_LOG_DIR        /var/log/yarn
 
 ENV JAVA_HOME   /usr/lib/jvm/default-jvm
-ENV PATH        $PATH:${JAVA_HOME}/bin:${HADOOP_PREFIX}/sbin:${HADOOP_PREFIX}/bin
+ENV PATH        $PATH:${JAVA_HOME}/bin:${HADOOP_HOME}/sbin:${HADOOP_HOME}/bin
 
 ENV HADOOP_CLUSTER_NAME       hadoop
 ENV HADOOP_ZOOKEEPER_QUORUM   zookeeper-1.vnet:2181,zookeeper-2.vnet:2181,zookeeper-3.vnet:2181
@@ -53,6 +52,9 @@ ENV YARN_APPMASTER_COMMAND_OPTS  -Xmx1024m
 ENV MAPRED_MAP_MEMORY_MB         1024
 ENV MAPRED_REDUCE_MEMORY_MB      1024
 
+# [Java 8] Over usage of virtual memory(https://issues.apache.org/jira/browse/YARN-4714)
+ENV MAPRED_CHILD_JAVA_OPTS "-XX:ReservedCodeCacheSize=100M -XX:MaxMetaspaceSize=256m -XX:CompressedClassSpaceSize=256m"
+
 ## HDFS path
 ENV YARN_REMOTE_APP_LOG_DIR      /tmp/logs
 ENV YARN_APP_MAPRED_STAGING_DIR  /tmp/hadoop-yarn/staging
@@ -70,6 +72,7 @@ RUN apk --no-cache add \
     ) \
     && wget -q -O - ${mirror_url}/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
        | tar -xzf - -C /usr/local \
+    && ln -s /usr/local/hadoop-${HADOOP_VERSION} /usr/local/hadoop-${HADOOP_VERSION%.*} \
     && env \
        | grep -E '^(JAVA|HADOOP|PATH|YARN)' \
        | sed 's/^/export /g' \
@@ -107,23 +110,23 @@ RUN apk --no-cache add \
     && chown -R mapred:hadoop \
         ${HADOOP_TMP_DIR}/mapred  \
     # remove unnecessary doc/src files 
-    && rm -rf ${HADOOP_PREFIX}/share/doc \
+    && rm -rf ${HADOOP_HOME}/share/doc \
     && for dir in common hdfs mapreduce tools yarn; do \
-         rm -rf ${HADOOP_PREFIX}/share/hadoop/${dir}/sources; \
+         rm -rf ${HADOOP_HOME}/share/hadoop/${dir}/sources; \
        done \
-    && rm -rf ${HADOOP_PREFIX}/share/hadoop/common/jdiff \
-    && rm -rf ${HADOOP_PREFIX}/share/hadoop/mapreduce/lib-examples \
-    && rm -rf ${HADOOP_PREFIX}/share/hadoop/yarn/test \
-    && find ${HADOOP_PREFIX}/share/hadoop -name *test*.jar | xargs rm -rf \
-    && rm -rf ${HADOOP_PREFIX}/lib/native
+    && rm -rf ${HADOOP_HOME}/share/hadoop/common/jdiff \
+    && rm -rf ${HADOOP_HOME}/share/hadoop/mapreduce/lib-examples \
+    && rm -rf ${HADOOP_HOME}/share/hadoop/yarn/test \
+    && find ${HADOOP_HOME}/share/hadoop -name *test*.jar | xargs rm -rf \
+    && rm -rf ${HADOOP_HOME}/lib/native
 
     
 COPY etc/*  ${HADOOP_CONF_DIR}/
 COPY bin/*  /usr/local/bin/
 COPY lib/*  /usr/local/lib/
        
-WORKDIR ${HADOOP_PREFIX}
+WORKDIR ${HADOOP_HOME}
 
-VOLUME ["${HADOOP_TMP_DIR}", "${HADOOP_LOG_DIR}", "${YARN_LOG_DIR}", "${HADOOP_PREFIX}"]
+VOLUME ["${HADOOP_TMP_DIR}", "${HADOOP_LOG_DIR}", "${YARN_LOG_DIR}", "${HADOOP_HOME}"]
 
 ENTRYPOINT ["entrypoint.sh"]
