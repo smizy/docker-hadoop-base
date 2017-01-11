@@ -40,9 +40,14 @@ if  [ "$1" == "journalnode" ]; then
 elif [ "$1" == "namenode-1" ]; then
     if [ ! -e "${HADOOP_TMP_DIR}/dfs/name/current/VERSION" ]; then
         su-exec hdfs hdfs namenode -format -force
-        su-exec hdfs hdfs zkfc -formatZK -force
+        if [ "${HADOOP_NAMENODE_HA}" != "" ]; then
+            su-exec hdfs hdfs zkfc -formatZK -force
+        fi
     fi        
-    su-exec hdfs hdfs zkfc &        
+#    wait_until ${HADOOP_QJOURNAL_ADDRESS%%:*} 8485
+    if [ "${HADOOP_NAMENODE_HA}" != "" ]; then
+        su-exec hdfs hdfs zkfc &  
+    fi      
     exec su-exec hdfs hdfs namenode
     
 elif [ "$1" == "namenode-2" ]; then
@@ -54,6 +59,7 @@ elif [ "$1" == "namenode-2" ]; then
     exec su-exec hdfs hdfs namenode
 
 elif [ "$1" == "datanode" ]; then
+    wait_until ${HADOOP_NAMENODE1_HOSTNAME} 8020 
     exec su-exec hdfs hdfs datanode
        
 elif [ "$1" == "resourcemanager-1" ]; then
@@ -64,7 +70,7 @@ elif [ "$1" == "nodemanager" ]; then
     exec su-exec yarn yarn nodemanager
     
 elif [ "$1" == "historyserver-1" ]; then    
-    wait_until ${HADOOP_NAMENODE2_HOSTNAME} 8020 
+    wait_until ${HADOOP_NAMENODE1_HOSTNAME}  8020 
     
     set +e -x
     

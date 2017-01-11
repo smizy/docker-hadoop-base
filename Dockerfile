@@ -1,4 +1,4 @@
-FROM alpine:3.4
+FROM alpine:3.5
 MAINTAINER smizy
 
 ARG BUILD_DATE
@@ -16,21 +16,20 @@ LABEL \
     org.label-schema.vcs-url="https://github.com/smizy/docker-hadoop-base"
 
 ENV HADOOP_VERSION      $VERSION
-ENV HADOOP_PREFIX       /usr/local/hadoop-${HADOOP_VERSION}
-ENV HADOOP_HOME         ${HADOOP_PREFIX}
-ENV HADOOP_COMMON_HOME  ${HADOOP_PREFIX}
-ENV HADOOP_HDFS_HOME    ${HADOOP_PREFIX}
-ENV HADOOP_MAPRED_HOME  ${HADOOP_PREFIX}
-ENV HADOOP_YARN_HOME    ${HADOOP_PREFIX}
-ENV HADOOP_CONF_DIR     ${HADOOP_PREFIX}/etc/hadoop 
+ENV HADOOP_HOME         /usr/local/hadoop-${HADOOP_VERSION}
+ENV HADOOP_COMMON_HOME  ${HADOOP_HOME}
+ENV HADOOP_HDFS_HOME    ${HADOOP_HOME}
+ENV HADOOP_MAPRED_HOME  ${HADOOP_HOME}
+ENV HADOOP_YARN_HOME    ${HADOOP_HOME}
+ENV HADOOP_CONF_DIR     ${HADOOP_HOME}/etc/hadoop 
 ENV HADOOP_LOG_DIR      /var/log/hdfs
 ENV HADOOP_TMP_DIR      /hadoop
-ENV YARN_CONF_DIR       ${HADOOP_PREFIX}/etc/hadoop
-ENV YARN_HOME           ${HADOOP_PREFIX}
+ENV YARN_CONF_DIR       ${HADOOP_HOME}/etc/hadoop
+ENV YARN_HOME           ${HADOOP_HOME}
 ENV YARN_LOG_DIR        /var/log/yarn
 
 ENV JAVA_HOME   /usr/lib/jvm/default-jvm
-ENV PATH        $PATH:${JAVA_HOME}/bin:${HADOOP_PREFIX}/sbin:${HADOOP_PREFIX}/bin
+ENV PATH        $PATH:${JAVA_HOME}/bin:${HADOOP_HOME}/sbin:${HADOOP_HOME}/bin
 
 ENV HADOOP_CLUSTER_NAME       hadoop
 ENV HADOOP_ZOOKEEPER_QUORUM   zookeeper-1.vnet:2181,zookeeper-2.vnet:2181,zookeeper-3.vnet:2181
@@ -40,6 +39,9 @@ ENV HADOOP_QJOURNAL_ADDRESS   journalnode-1.vnet:8485;journalnode-2.vnet:8485;jo
 ENV HADOOP_DFS_REPLICATION    3
 ENV YARN_RESOURCEMANAGER_HOSTNAME resourcemanager-1.vnet
 ENV MAPRED_JOBHISTORY_HOSTNAME    historyserver-1.vnet
+
+# [Java 8] Over usage of virtual memory(https://issues.apache.org/jira/browse/YARN-4714)
+ENV MAPRED_CHILD_JAVA_OPTS "-XX:ReservedCodeCacheSize=100M -XX:MaxMetaspaceSize=256m -XX:CompressedClassSpaceSize=256m"
 
 ## default memory/cpu setting
 ENV HADOOP_HEAPSIZE              1000
@@ -58,9 +60,9 @@ ENV YARN_REMOTE_APP_LOG_DIR      /tmp/logs
 ENV YARN_APP_MAPRED_STAGING_DIR  /tmp/hadoop-yarn/staging
 
 RUN apk --no-cache add \
-    bash \
-    openjdk8-jre \
-    su-exec \
+        bash \
+        openjdk8-jre \
+        su-exec \
     # download
     && set -x \
     && mirror_url=$( \
@@ -70,6 +72,7 @@ RUN apk --no-cache add \
     ) \
     && wget -q -O - ${mirror_url}/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
        | tar -xzf - -C /usr/local \
+    && ln -s /usr/local/hadoop-${HADOOP_VERSION} /usr/local/hadoop-${HADOOP_VERSION%.*} \
     && env \
        | grep -E '^(JAVA|HADOOP|PATH|YARN)' \
        | sed 's/^/export /g' \
