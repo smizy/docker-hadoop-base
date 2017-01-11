@@ -18,7 +18,7 @@ runtime:
 .PHONY: test
 test:
 	(docker network ls | grep vnet ) || docker network create vnet
-	namenode=1 datanode=1 ./make_docker_compose_file.sh hdfs yarn \
+	zookeeper=1 namenode=1 datanode=1 ./make_docker_compose_file.sh hdfs yarn \
 		| sed -E 's/(HADOOP|YARN)_HEAPSIZE=1000/\1_HEAPSIZE=600/g' \
 		| sed -e 's/Xmx1024m/Xmx512m/g' \
 		> docker-compose.ci.yml.tmp
