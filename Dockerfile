@@ -41,7 +41,7 @@ ENV YARN_RESOURCEMANAGER_HOSTNAME resourcemanager-1.vnet
 ENV MAPRED_JOBHISTORY_HOSTNAME    historyserver-1.vnet
 
 # [Java 8] Over usage of virtual memory(https://issues.apache.org/jira/browse/YARN-4714)
-ENV MAPRED_CHILD_JAVA_OPTS "-XX:ReservedCodeCacheSize=100M -XX:MaxMetaspaceSize=256m -XX:CompressedClassSpaceSize=256m"
+# ENV MAPRED_CHILD_JAVA_OPTS "-XX:ReservedCodeCacheSize=100M -XX:MaxMetaspaceSize=256m -XX:CompressedClassSpaceSize=256m"
 
 ## default memory/cpu setting
 ENV HADOOP_HEAPSIZE              1000
