@@ -18,11 +18,11 @@ services:
     networks: ["vnet"]
     hostname: namenode-1.vnet
     image: smizy/hadoop-base:3.0.0-alpha2-alpine 
-    expose: ["8020"]
-    ports:  ["50070"]
+    expose: ["9820"]
+    ports:  ["9870"]
     environment:
-      - SERVICE_8020_NAME=namenode
-      - SERVICE_50070_IGNORE=true
+      - SERVICE_9820_NAME=namenode
+      - SERVICE_9870_IGNORE=true
       - HADOOP_ZOOKEEPER_QUORUM=zookeeper-1.vnet:2181 
       - HADOOP_HEAPSIZE=1000
       - HADOOP_NAMENODE_HA=
@@ -35,11 +35,11 @@ services:
     networks: ["vnet"]
     hostname: datanode-1.vnet
     image: smizy/hadoop-base:3.0.0-alpha2-alpine
-    expose: ["50010", "50020", "50075"]
+    expose: ["9866", "9867", "9864"]
     environment:
-      - SERVICE_50010_NAME=datanode
-      - SERVICE_50020_IGNORE=true
-      - SERVICE_50075_IGNORE=true
+      - SERVICE_9866_NAME=datanode
+      - SERVICE_9867_IGNORE=true
+      - SERVICE_9864_IGNORE=true
       - HADOOP_ZOOKEEPER_QUORUM=zookeeper-1.vnet:2181 
       - HADOOP_HEAPSIZE=1000
       - HADOOP_NAMENODE_HA=
@@ -51,7 +51,7 @@ services:
     container_name: resourcemanager-1
     networks: ["vnet"]
     hostname: resourcemanager-1.vnet
-    image: smizy/hadoop-base:2.7.3-alpine
+    image: smizy/hadoop-base:3.0.0-alpha2-alpine
     expose: ["8030-8033"]
     ports:  ["8088"]
     environment:
@@ -71,7 +71,7 @@ services:
     container_name: historyserver-1
     networks: ["vnet"]
     hostname: historyserver-1.vnet
-    image: smizy/hadoop-base:2.7.3-alpine
+    image: smizy/hadoop-base:3.0.0-alpha2-alpine
     expose: ["10020"]
     ports:  ["19888:19888"]
     environment:
@@ -88,7 +88,7 @@ services:
     container_name: nodemanager-1
     networks: ["vnet"]
     hostname: nodemanager-1.vnet
-    image: smizy/hadoop-base:2.7.3-alpine
+    image: smizy/hadoop-base:3.0.0-alpha2-alpine
     expose: ["8040-8042"]
     environment:
       - SERVICE_8042_NAME=nodemanager

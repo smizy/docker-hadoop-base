@@ -25,11 +25,11 @@ services:
     networks: ["${network_name}"]
     hostname: namenode-${i}.${network_name}
     image: smizy/hadoop-base:3.0.0-alpha2-alpine 
-    expose: ["8020"]
-    ports:  ["50070"]
+    expose: ["9820"]
+    ports:  ["9870"]
     environment:
-      - SERVICE_8020_NAME=namenode
-      - SERVICE_50070_IGNORE=true
+      - SERVICE_9820_NAME=namenode
+      - SERVICE_9870_IGNORE=true
       - HADOOP_ZOOKEEPER_QUORUM=${ZOOKEEPER_QUORUM} 
       - HADOOP_HEAPSIZE=1000
       - HADOOP_NAMENODE_HA=${NAMENODE_HA}
@@ -44,11 +44,11 @@ services:
     networks: ["${network_name}"]
     hostname: datanode-${i}.${network_name}
     image: smizy/hadoop-base:3.0.0-alpha2-alpine
-    expose: ["50010", "50020", "50075"]
+    expose: ["9866", "9867", "9864"]
     environment:
-      - SERVICE_50010_NAME=datanode
-      - SERVICE_50020_IGNORE=true
-      - SERVICE_50075_IGNORE=true
+      - SERVICE_9866_NAME=datanode
+      - SERVICE_9867_IGNORE=true
+      - SERVICE_9864_IGNORE=true
       - HADOOP_ZOOKEEPER_QUORUM=${ZOOKEEPER_QUORUM} 
       - HADOOP_HEAPSIZE=1000
       - HADOOP_NAMENODE_HA=${NAMENODE_HA}
