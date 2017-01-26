@@ -1,11 +1,11 @@
 #!/bin/bash
 
 ###
-# // pseudo mode
-# $ env $(grep -v ^# pseudo.env ) DEBUG=1 ./make_docker_compose_file.sh hdfs yarn > docker-compose.yml
+# // small setup
+# $ zookeeper=1 namenode=1 datanode=1 ./make_docker_compose_file.sh hdfs hbase > docker-compose.yml
 #
-# // distributed mode
-# $ env $(grep -v ^# multihost.env ) ./make_docker_compose_file.sh hdfs yarn > docker-compose.yml
+# // hdfs + hbase setup
+#  ./make_docker_compose_file.sh hdfs hbase > docker-compose.yml
 # 
 # ./make_docker_compose_yml.sh [hdfs] [hbase] [yarn] [drill]
 ###
@@ -41,8 +41,9 @@ historyserver=${historyserver:-1}
 nodemanager=${nodemanager:-${datanode}}
 
 # hbase scale size
-hmaster=${hmaster:-2}
+hmaster=${hmaster:-${namenode}}
 regionserver=${regionserver:-${datanode}}
+hbasethrift=${hbasethrift:-0}
 
 # drill scale size
 drillbit=${drillbit:-1}
@@ -129,8 +130,7 @@ services:
 $docker_compose_services
 
 networks:
-  vnet:
+  $network_name:
     external:
       name: $network_name 
 EOD
-
