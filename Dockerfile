@@ -66,12 +66,12 @@ RUN apk --no-cache add \
     # download
     && set -x \
     && mirror_url=$( \
-        wget -q -O - http://www.apache.org/dyn/closer.cgi/hadoop/common/ \
-        | sed -n 's#.*href="\(http://ftp.[^"]*\)".*#\1#p' \
-        | head -n 1 \
-    ) \
-    && wget -q -O - ${mirror_url}/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
-       | tar -xzf - -C /usr/local \
+        wget -q -O - "http://www.apache.org/dyn/closer.cgi/?as_json=1" \
+        | grep "preferred" \
+        | sed -n 's#.*"\(http://*[^"]*\)".*#\1#p' \
+        ) \
+    && wget -q -O - ${mirror_url}/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
+        | tar -xzf - -C /usr/local \
     && ln -s /usr/local/hadoop-${HADOOP_VERSION} /usr/local/hadoop-${HADOOP_VERSION%.*} \
     && env \
        | grep -E '^(JAVA|HADOOP|PATH|YARN)' \

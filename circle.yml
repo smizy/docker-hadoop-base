@@ -2,7 +2,7 @@
 # https://circleci.com/docs/docker
 machine:
   environment:
-    VERSION: 2.7.3
+    VERSION: "2.8.0"
     BUILD_DATE: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
     VCS_REF: ${CIRCLE_SHA1:0:7}
     TAG: ${VERSION}-alpine
@@ -37,7 +37,7 @@ test:
 # https://circleci.com/docs/environment-variables
 deployment:
   master:
-    branch: master
+    branch: "2.8"
     owner: smizy
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
@@ -47,6 +47,6 @@ deployment:
       - docker push smizy/hadoop-base:${TAG}
       - docker push smizy/hadoop-base:${TAG_MINOR}
  #     - docker push smizy/hadoop-base:${TAG_MAJOR}      
-      - docker push smizy/hadoop-base:latest
+ #     - docker push smizy/hadoop-base:latest
       - docker logout
       - curl -X POST 'https://hooks.microbadger.com/images/smizy/hadoop-base/PPt6QPRZ4pz5T3VomNlg4BVneew='
