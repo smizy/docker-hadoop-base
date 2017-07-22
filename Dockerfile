@@ -59,19 +59,107 @@ ENV MAPRED_REDUCE_MEMORY_MB      1024
 ENV YARN_REMOTE_APP_LOG_DIR      /tmp/logs
 ENV YARN_APP_MAPRED_STAGING_DIR  /tmp/hadoop-yarn/staging
 
-RUN apk --no-cache add \
+ENV PROTOBUF_VERSION     2.5.0
+ENV GOOGLETEST_VERSION   1.5.0    
+
+RUN set -x \
+    && apk --no-cache add \
         bash \
         openjdk8-jre \
         su-exec \
-    # download
-    && set -x \
+        tar \
+        wget \
+    ## Build Protobuf
+    ## - dependency lib
+    && apk --no-cache add \
+        zlib \
+    && apk --no-cache add --virtual .builddeps \
+        autoconf \
+        automake \
+        build-base \
+        libtool \
+        zlib-dev \
+    # - protobuf src
+    && wget -q -O - https://github.com/google/protobuf/archive/v${PROTOBUF_VERSION}.tar.gz \
+        | tar -xzf - -C /tmp \
+    && cd /tmp/protobuf-* \
+    # - gtest src
+    && wget -q -O - https://github.com/google/googletest/archive/release-${GOOGLETEST_VERSION}.tar.gz \
+        | tar -xzf - \
+    && mv googletest-* gtest \
+    # - build
+    && ./autogen.sh \
+    && CXXFLAGS="$CXXFLAGS -fno-delete-null-pointer-checks" ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var \
+    && make \
+    && make check \
+    && make install \
+    && rm -rf /tmp/protobuf-* \
+
+    ## Build Hadoop
+    ## - dependency lib 
+    && apk --no-cache add \
+        bash \
+        bzip2 \
+        fts \
+        fuse \
+        libressl-dev \
+        libtirpc \
+        snappy \
+        zlib \
+    && apk --no-cache add --virtual .builddeps.1 \
+        autoconf \
+        automake \
+        build-base \
+        bzip2-dev \
+        cmake \
+        curl \
+        fts-dev \
+        fuse-dev \
+        git \
+        libtirpc-dev \
+        libtool \
+        maven \
+        openjdk8 \
+        snappy-dev \
+        zlib-dev \
+    ## - hadoop src
     && mirror_url=$( \
-        wget -q -O - http://www.apache.org/dyn/closer.cgi/hadoop/common/ \
-        | sed -n 's#.*href="\(http://ftp.[^"]*\)".*#\1#p' \
-        | head -n 1 \
-    ) \
-    && wget -q -O - ${mirror_url}/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
-       | tar -xzf - -C /usr/local \
+        wget -q -O - "http://www.apache.org/dyn/closer.cgi/?as_json=1" \
+        | grep "preferred" \
+        | sed -n 's#.*"\(http://*[^"]*\)".*#\1#p' \
+        ) \
+    && wget -q -O - ${mirror_url}/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}-src.tar.gz \
+        | tar -xzf - -C /tmp \
+
+    && cd /tmp/hadoop-* \
+    ## - bad substitution at line 11
+    && sed -ri 's/executable="sh"/executable="bash"/g' hadoop-project-dist/pom.xml \
+    ## - error: 'sys_nerr' undeclared (first use in this function)
+    && sed -ri 's/^#if defined\(__sun\)/#if 1/g' hadoop-common-project/hadoop-common/src/main/native/src/exception.c \
+    ## - error: undefined reference to fts_* 
+    && sed -ri 's/^( *container)/\1\n    fts/g' hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-nodemanager/src/CMakeLists.txt \
+    ## - warning: implicit declaration of function 'setnetgrent'
+    && sed -ri 's/^(.*JniBasedUnixGroupsNetgroupMapping.c)/#\1/g' hadoop-common-project/hadoop-common/src/CMakeLists.txt \
+    ## - fatal error: rpc/types.h: No such file or directory
+    && sed -ri 's#^(include_directories.*)#\1\n    /usr/include/tirpc#' /tmp/hadoop-2.7.3-src/hadoop-tools/hadoop-pipes/src/CMakeLists.txt \
+    && sed -ri 's/^( *pthread)/\1\n    tirpc/g' /tmp/hadoop-2.7.3-src/hadoop-tools/hadoop-pipes/src/CMakeLists.txt \
+    ## - build
+    && mvn package -Pdist,native -DskipTests -DskipDocs -Dtar \
+#    && mv hadoop-dist/target/hadoop-${HADOOP_VERSION} /usr/local/ \
+    && mv hadoop-dist/target/hadoop-${HADOOP_VERSION}.tar.gz / \
+    && tar -xzf /hadoop-${HADOOP_VERSION}.tar.gz -C /usr/local \
+    && rm -rf /tmp/hadoop-* \
+    && cd / \
+
+    # # download hadoop-bin
+    # && set -x \
+    # && mirror_url=$( \
+    #     wget -q -O - http://www.apache.org/dyn/closer.cgi/hadoop/common/ \
+    #     | sed -n 's#.*href="\(http://ftp.[^"]*\)".*#\1#p' \
+    #     | head -n 1 \
+    # ) \
+    # && wget -q -O - ${mirror_url}/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz \
+    #    | tar -xzf - -C /usr/local \
     && ln -s /usr/local/hadoop-${HADOOP_VERSION} /usr/local/hadoop-${HADOOP_VERSION%.*} \
     && env \
        | grep -E '^(JAVA|HADOOP|PATH|YARN)' \
@@ -109,7 +197,8 @@ RUN apk --no-cache add \
         ${YARN_LOG_DIR} \
     && chown -R mapred:hadoop \
         ${HADOOP_TMP_DIR}/mapred  \
-    # remove unnecessary doc/src files 
+    # cleanup
+    # - remove unnecessary doc/src files 
     && rm -rf ${HADOOP_HOME}/share/doc \
     && for dir in common hdfs mapreduce tools yarn; do \
          rm -rf ${HADOOP_HOME}/share/hadoop/${dir}/sources; \
@@ -118,13 +207,19 @@ RUN apk --no-cache add \
     && rm -rf ${HADOOP_HOME}/share/hadoop/mapreduce/lib-examples \
     && rm -rf ${HADOOP_HOME}/share/hadoop/yarn/test \
     && find ${HADOOP_HOME}/share/hadoop -name *test*.jar | xargs rm -rf \
-    && rm -rf ${HADOOP_HOME}/lib/native
+#    && rm -rf ${HADOOP_HOME}/lib/native \
+    && rm /hadoop-${HADOOP_VERSION}.tar.gz \
+    && rm -rf /root/.m2 \
+    && apk del \
+        .builddeps \
+        .builddeps.1 \
+    && echo
 
     
 COPY etc/*  ${HADOOP_CONF_DIR}/
 COPY bin/*  /usr/local/bin/
 COPY lib/*  /usr/local/lib/
-       
+
 WORKDIR ${HADOOP_HOME}
 
 VOLUME ["${HADOOP_TMP_DIR}", "${HADOOP_LOG_DIR}", "${YARN_LOG_DIR}", "${HADOOP_HOME}"]

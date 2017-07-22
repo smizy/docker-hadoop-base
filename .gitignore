@@ -2,3 +2,4 @@
 *.bak
 *.tmp
 credentials
+tmp
