@@ -8,7 +8,8 @@ Hadoop(Common/HDFS/YARN/MapReduce) docker image based on alpine
 
 * Namenode is set to high availability mode with multiple namenode
 * Non secure mode
-* Native-hadoop library included
+* Alpine built native-hadoop library bundled
+  *  Native netgroup mapping function missing
 * One process per container as possible 
 * No sshd setting. Cannot use utility script like start-dfs.sh and start-yarn.sh.  
 * conf template applied by mustache.sh
