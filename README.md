@@ -2,7 +2,7 @@
 
 [![](https://images.microbadger.com/badges/image/smizy/hadoop-base:2.7.4-alpine.svg)](http://microbadger.com/images/smizy/hadoop-base:2.7.4-alpine "Get your own image badge on microbadger.com")
 [![](https://images.microbadger.com/badges/version/smizy/hadoop-base:2.7.4-alpine.svg)](http://microbadger.com/images/smizy/hadoop-base:2.7.4-alpine "Get your own image badge on microbadger.com")
-[![CircleCI](https://circleci.com/gh/smizy/docker-hadoop-base.svg?style=shield&circle-token=155cf7c34ea00da94d6d7848796b96d62d95de48)](https://circleci.com/gh/smizy/docker-hadoop-base)
+[![CircleCI](https://circleci.com/gh/smizy/docker-hadoop-base.svg?circle-token=155cf7c34ea00da94d6d7848796b96d62d95de48)](https://circleci.com/gh/smizy/docker-hadoop-base)
 
 Hadoop(Common/HDFS/YARN/MapReduce) docker image based on alpine
 
