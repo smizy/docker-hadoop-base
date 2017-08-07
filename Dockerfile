@@ -141,7 +141,7 @@ RUN set -x \
     ## - warning: implicit declaration of function 'setnetgrent'
     && sed -ri 's/^(.*JniBasedUnixGroupsNetgroupMapping.c)/#\1/g' hadoop-common-project/hadoop-common/src/CMakeLists.txt \
     ## - fatal error: rpc/types.h: No such file or directory
-    && sed -ri 's#^(include_directories.*)#\1\n    /usr/include/tirpc#' /tmp/hadoop-2.7.3-src/hadoop-tools/hadoop-pipes/src/CMakeLists.txt \
+    && sed -ri 's#^(include_directories.*)#\1\n    /usr/include/tirpc#' hadoop-tools/hadoop-pipes/src/CMakeLists.txt \
     && sed -ri 's/^( *pthread)/\1\n    tirpc/g' hadoop-tools/hadoop-pipes/src/CMakeLists.txt \
     ## - build
     && mvn package -Pdist,native -DskipTests -DskipDocs -Dtar \
