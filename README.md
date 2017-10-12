@@ -2,13 +2,14 @@
 
 [![](https://images.microbadger.com/badges/image/smizy/hadoop-base:3.0.0-alpha3-alpine.svg)](http://microbadger.com/images/smizy/hadoop-base:3.0.0-alpha3-alpine "Get your own image badge on microbadger.com")
 [![](https://images.microbadger.com/badges/version/smizy/hadoop-base:3.0.0-alpha3-alpine.svg)](http://microbadger.com/images/smizy/hadoop-base:3.0.0-alpha3-alpine "Get your own image badge on microbadger.com")
-[![CircleCI](https://circleci.com/gh/smizy/docker-hadoop-base.svg?style=shield&circle-token=155cf7c34ea00da94d6d7848796b96d62d95de48)](https://circleci.com/gh/smizy/docker-hadoop-base)
+[![CircleCI](https://circleci.com/gh/smizy/docker-hadoop-base.svg?circle-token=155cf7c34ea00da94d6d7848796b96d62d95de48)](https://circleci.com/gh/smizy/docker-hadoop-base)
 
 Hadoop(Common/HDFS/YARN/MapReduce) docker image based on alpine
 
 * Namenode is set to high availability mode with multiple namenode
 * Non secure mode
-* Native-hadoop library missing
+* Alpine built native-hadoop library bundled
+  *  Native netgroup mapping function missing
 * One process per container as possible 
 * No sshd setting. Cannot use utility script like start-dfs.sh and start-yarn.sh.  
 * conf template applied by mustache.sh
@@ -35,7 +36,7 @@ zookeeper=1 namenode=1 datanode=1 ./make_docker_compose_yml.sh hdfs yarn > docke
 # config test
 docker-compose config
 
-# hadoop startup (zookeeper, namenode, datanode, resourcemanager, nodemanager)
+# hadoop startup
 docker-compose up -d
 
 # tail logs for a while
