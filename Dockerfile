@@ -146,10 +146,10 @@ RUN set -x \
     ## - fatal error: rpc/types.h: No such file or directory
     && sed -ri 's#^(include_directories.*)#\1\n    /usr/include/tirpc#' hadoop-tools/hadoop-pipes/src/CMakeLists.txt \
     && sed -ri 's/(\$\{OPENSSL_LIBRARIES\})/\1 tirpc/' hadoop-tools/hadoop-pipes/src/CMakeLists.txt \
-    ## - undefined reference to `backtrace' 
-    && sed -ri 's/(rt pthread)/execinfo \1/' hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/CMakeLists.txt \
-    ## - error: 'HMAC_CTX_new' was not declared in this scope
-    && sed -ri.bk 's/^(#if OPENSSL_VERSION[^;]+)/\1 || defined\(LIBRESSL_VERSION_NUMBER\)/' hadoop-tools/hadoop-pipes/src/main/native/pipes/impl/HadoopPipes.cc \
+    # ## - undefined reference to `backtrace' 
+    # && sed -ri 's/(rt pthread)/execinfo \1/' hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/CMakeLists.txt \
+    # ## - error: 'HMAC_CTX_new' was not declared in this scope
+    # && sed -ri.bk 's/^(#if OPENSSL_VERSION[^;]+)/\1 || defined\(LIBRESSL_VERSION_NUMBER\)/' hadoop-tools/hadoop-pipes/src/main/native/pipes/impl/HadoopPipes.cc \
     
     ## - build
     && mvn package -Pdist,native -DskipTests -DskipDocs -Dtar \
