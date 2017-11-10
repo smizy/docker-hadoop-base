@@ -1,11 +1,11 @@
 #!/bin/bash
 
 ###
-# // pseudo mode
-# $ env $(grep -v ^# pseudo.env ) DEBUG=1 ./make_docker_compose_file.sh hdfs yarn > docker-compose.yml
+# // small setup
+# zookeeper=1 namenode=1 datanode=1 ./make_docker_compose_yml.sh hdfs yarn > docker-compose.yml
 #
-# // distributed mode
-# $ env $(grep -v ^# multihost.env ) ./make_docker_compose_file.sh hdfs yarn > docker-compose.yml
+# // default
+# ./make_docker_compose_yaml.sh hdfs yarn > docker-compose.yml
 # 
 # ./make_docker_compose_yml.sh [hdfs] [hbase] [yarn] [drill]
 ###

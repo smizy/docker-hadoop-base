@@ -1,14 +1,15 @@
 # docker-hadoop-base
 
-[![](https://images.microbadger.com/badges/image/smizy/hadoop-base:2.8.0-alpine.svg)](http://microbadger.com/images/smizy/hadoop-base:2.8.0-alpine "Get your own image badge on microbadger.com")
-[![](https://images.microbadger.com/badges/version/smizy/hadoop-base:2.8.0-alpine.svg)](http://microbadger.com/images/smizy/hadoop-base:2.8.0-alpine "Get your own image badge on microbadger.com")
-[![CircleCI](https://circleci.com/gh/smizy/docker-hadoop-base.svg?style=shield&circle-token=155cf7c34ea00da94d6d7848796b96d62d95de48)](https://circleci.com/gh/smizy/docker-hadoop-base)
+[![](https://images.microbadger.com/badges/image/smizy/hadoop-base:2.8.2-alpine.svg)](http://microbadger.com/images/smizy/hadoop-base:2.8.2-alpine "Get your own image badge on microbadger.com")
+[![](https://images.microbadger.com/badges/version/smizy/hadoop-base:2.8.2-alpine.svg)](http://microbadger.com/images/smizy/hadoop-base:2.8.2-alpine "Get your own image badge on microbadger.com")
+[![CircleCI](https://circleci.com/gh/smizy/docker-hadoop-base.svg?circle-token=155cf7c34ea00da94d6d7848796b96d62d95de48)](https://circleci.com/gh/smizy/docker-hadoop-base)
 
 Hadoop(Common/HDFS/YARN/MapReduce) docker image based on alpine
 
 * Namenode is set to high availability mode with multiple namenode
 * Non secure mode
-* Native-hadoop library missing
+* Alpine built native-hadoop library bundled
+  *  Native netgroup mapping function missing
 * One process per container as possible 
 * No sshd setting. Cannot use utility script like start-dfs.sh and start-yarn.sh.  
 * conf template applied by mustache.sh
@@ -30,7 +31,7 @@ eval $(docker-machine env default)
 docker network create vnet
 
 # make docker-compose.yml 
-zookeeper=1 namenode=1 datanode=1 ./make_docker_compose_file.sh hdfs yarn > docker-compose.yml
+zookeeper=1 namenode=1 datanode=1 ./make_docker_compose_yml.sh hdfs yarn > docker-compose.yml
 
 # config test
 docker-compose config
@@ -57,7 +58,7 @@ zookeeper-1         entrypoint.sh -server 1 1 vnet   Up      2181/tcp, 2888/tcp,
 docker ps --format {{.Names}} | xargs docker stats
 
 # run example data (pi calc)
-docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.8.0.jar pi 10 100
+docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.8.2.jar pi 10 100
 
 # view job history in web ui
 open http://$(docker-machine ip default):19888
