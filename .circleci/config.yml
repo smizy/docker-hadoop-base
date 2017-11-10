@@ -8,7 +8,7 @@ jobs:
 
     environment:
       VERSION: "2.8.2"
-      TAG: "2.8,2-alpine"
+      TAG: "2.8.2-alpine"
       # TAG: ${VERSION}-alpine
       # TAG_MINOR: ${VERSION%.*}-alpine
       # TAG_MAJOR: ${VERSION%%.*}-alpine 
@@ -35,6 +35,7 @@ jobs:
             apk --no-cache add \
               bash \
               curl \
+              curl-dev \
               make \
               python3 
             
