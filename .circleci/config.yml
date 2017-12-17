@@ -36,6 +36,7 @@ jobs:
               bash \
               curl \
               curl-dev \
+              findutils \
               make \
               python3 
             
