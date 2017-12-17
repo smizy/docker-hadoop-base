@@ -35,6 +35,7 @@ jobs:
             apk --no-cache add \
               bash \
               curl \
+              curl-dev \
               make \
               python3 
             
