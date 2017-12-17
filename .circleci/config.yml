@@ -72,7 +72,7 @@ jobs:
             make test
 
       - run:
-          nmae: docker image push
+          name: docker image push
           command: |
             TAG_MINOR=${VERSION%.*}-alpine
             TAG_MAJOR=${VERSION%%.*}-alpine 
