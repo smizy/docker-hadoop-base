@@ -69,6 +69,7 @@ RUN set -x \
     && apk update \
     && apk --no-cache add \
         bash \
+        findutils \
         openjdk8-jre \
         su-exec \
         tar \
