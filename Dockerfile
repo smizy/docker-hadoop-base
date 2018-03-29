@@ -1,11 +1,11 @@
 FROM alpine:3.6
-MAINTAINER smizy
 
 ARG BUILD_DATE
 ARG VCS_REF
 ARG VERSION
 
 LABEL \
+    maintainer="smizy" \
     org.label-schema.build-date=$BUILD_DATE \
     org.label-schema.docker.dockerfile="/Dockerfile" \
     org.label-schema.license="Apache License 2.0" \
@@ -99,7 +99,6 @@ RUN set -x \
     && make check \
     && make install \
     && rm -rf /tmp/protobuf-* \
-
     ## Build Hadoop
     ## - dependency lib 
     && apk --no-cache add \
@@ -129,7 +128,6 @@ RUN set -x \
         openjdk8 \
         snappy-dev \
         zlib-dev \
-
     ## - hadoop src
     && mirror_url=$( \
         wget -q -O - "http://www.apache.org/dyn/closer.cgi/?as_json=1" \
@@ -154,14 +152,12 @@ RUN set -x \
     && sed -ri 's/(rt pthread)/execinfo \1/' hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-nativetask/src/CMakeLists.txt \
     ## - error: 'HMAC_CTX_new' was not declared in this scope
     && sed -ri.bk 's/^(#if OPENSSL_VERSION[^;]+)/\1 || defined\(LIBRESSL_VERSION_NUMBER\)/' hadoop-tools/hadoop-pipes/src/main/native/pipes/impl/HadoopPipes.cc \
-
     ## - build
     && mvn package -Pdist,native -DskipTests -DskipDocs -Dtar \
     && mv hadoop-dist/target/hadoop-${HADOOP_VERSION}.tar.gz / \
     && tar -xzf /hadoop-${HADOOP_VERSION}.tar.gz -C /usr/local \
     && rm -rf /tmp/hadoop-* \
     && cd / \
-
     # # download hadoop-bin
     # && set -x \
     # && mirror_url=$( \

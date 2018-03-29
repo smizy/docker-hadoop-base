@@ -41,7 +41,7 @@
     
     <property>
         <name>dfs.namenode.rpc-address.{{HADOOP_CLUSTER_NAME}}.nn1</name>
-        <value>{{HADOOP_NAMENODE1_HOSTNAME}}:9820</value>
+        <value>{{HADOOP_NAMENODE1_HOSTNAME}}:8020</value>
     </property>
 
     <property>
@@ -51,7 +51,7 @@
 
     <property>
         <name>dfs.namenode.rpc-address.{{HADOOP_CLUSTER_NAME}}.nn2</name>
-        <value>{{HADOOP_NAMENODE2_HOSTNAME}}:9820</value>
+        <value>{{HADOOP_NAMENODE2_HOSTNAME}}:8020</value>
     </property>
 
     <property>
@@ -89,7 +89,7 @@
 {{^HADOOP_NAMENODE_HA}}
     <property>
         <name>dfs.namenode.rpc-address.{{HADOOP_CLUSTER_NAME}}</name>
-        <value>{{HADOOP_NAMENODE1_HOSTNAME}}:9820</value>
+        <value>{{HADOOP_NAMENODE1_HOSTNAME}}:8020</value>
     </property>
     
     <property>

@@ -7,7 +7,7 @@ services:
     container_name: journalnode-${i}
     networks: ["${network_name}"]
     hostname: journalnode-${i}.${network_name}
-    image: smizy/hadoop-base:3.0.0-alpine
+    image: smizy/hadoop-base:3.0.1-alpine
     expose: [8480, 8485]
     environment:
       - SERVICE_8485_NAME=journalnode
@@ -24,11 +24,11 @@ services:
     container_name: namenode-${i}
     networks: ["${network_name}"]
     hostname: namenode-${i}.${network_name}
-    image: smizy/hadoop-base:3.0.0-alpine 
-    expose: ["9820"]
+    image: smizy/hadoop-base:3.0.1-alpine 
+    expose: ["8020"]
     ports:  ["9870"]
     environment:
-      - SERVICE_9820_NAME=namenode
+      - SERVICE_8020_NAME=namenode
       - SERVICE_9870_IGNORE=true
       - HADOOP_ZOOKEEPER_QUORUM=${ZOOKEEPER_QUORUM} 
       - HADOOP_HEAPSIZE=1000
@@ -43,7 +43,7 @@ services:
     container_name: datanode-${i}
     networks: ["${network_name}"]
     hostname: datanode-${i}.${network_name}
-    image: smizy/hadoop-base:3.0.0-alpine
+    image: smizy/hadoop-base:3.0.1-alpine
     expose: ["9866", "9867", "9864"]
     environment:
       - SERVICE_9866_NAME=datanode

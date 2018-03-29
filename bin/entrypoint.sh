@@ -52,14 +52,14 @@ elif [ "$1" == "namenode-1" ]; then
     
 elif [ "$1" == "namenode-2" ]; then
     if [ ! -e "${HADOOP_TMP_DIR}/dfs/name/current/VERSION" ]; then
-        wait_until ${HADOOP_NAMENODE1_HOSTNAME} 9820              
+        wait_until ${HADOOP_NAMENODE1_HOSTNAME} 8020              
         su-exec hdfs hdfs namenode -bootstrapStandby
     fi        
     su-exec hdfs hdfs zkfc &
     exec su-exec hdfs hdfs namenode
 
 elif [ "$1" == "datanode" ]; then
-    wait_until ${HADOOP_NAMENODE1_HOSTNAME} 9820 
+    wait_until ${HADOOP_NAMENODE1_HOSTNAME} 8020 
     exec su-exec hdfs hdfs datanode
        
 elif [ "$1" == "resourcemanager-1" ]; then
@@ -70,7 +70,7 @@ elif [ "$1" == "nodemanager" ]; then
     exec su-exec yarn yarn nodemanager
     
 elif [ "$1" == "historyserver-1" ]; then    
-    wait_until ${HADOOP_NAMENODE1_HOSTNAME}  9820 
+    wait_until ${HADOOP_NAMENODE1_HOSTNAME}  8020 
     
     set +e -x
     

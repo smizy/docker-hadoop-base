@@ -1,7 +1,7 @@
 # docker-hadoop-base
 
-[![](https://images.microbadger.com/badges/image/smizy/hadoop-base:3.0.0-alpine.svg)](http://microbadger.com/images/smizy/hadoop-base:3.0.0-alpine "Get your own image badge on microbadger.com")
-[![](https://images.microbadger.com/badges/version/smizy/hadoop-base:3.0.0-alpine.svg)](http://microbadger.com/images/smizy/hadoop-base:3.0.0-alpine "Get your own image badge on microbadger.com")
+[![](https://images.microbadger.com/badges/image/smizy/hadoop-base:3.0.1-alpine.svg)](http://microbadger.com/images/smizy/hadoop-base:3.0.1-alpine "Get your own image badge on microbadger.com")
+[![](https://images.microbadger.com/badges/version/smizy/hadoop-base:3.0.1-alpine.svg)](http://microbadger.com/images/smizy/hadoop-base:3.0.1-alpine "Get your own image badge on microbadger.com")
 [![CircleCI](https://circleci.com/gh/smizy/docker-hadoop-base.svg?circle-token=155cf7c34ea00da94d6d7848796b96d62d95de48)](https://circleci.com/gh/smizy/docker-hadoop-base)
 
 Hadoop(Common/HDFS/YARN/MapReduce) docker image based on alpine
@@ -49,7 +49,7 @@ docker-compose ps
 ----------------------------------------------------------------------------------------------------------------------------
 datanode-1          entrypoint.sh datanode           Up      9864/tcp, 9866/tcp, 9867/tcp                                    
 historyserver-1     entrypoint.sh historyserver-1    Up      10020/tcp, 0.0.0.0:19888->19888/tcp                             
-namenode-1          entrypoint.sh namenode-1         Up      9820/tcp, 0.0.0.0:32817->9870/tcp                               
+namenode-1          entrypoint.sh namenode-1         Up      8020/tcp, 0.0.0.0:32817->9870/tcp                               
 nodemanager-1       entrypoint.sh nodemanager        Up      8040/tcp, 8041/tcp, 8042/tcp                                    
 resourcemanager-1   entrypoint.sh resourcemana ...   Up      8030/tcp, 8031/tcp, 8032/tcp, 8033/tcp, 0.0.0.0:32818->8088/tcp 
 zookeeper-1         entrypoint.sh -server 1 1 vnet   Up      2181/tcp, 2888/tcp, 3888/tcp
@@ -58,7 +58,7 @@ zookeeper-1         entrypoint.sh -server 1 1 vnet   Up      2181/tcp, 2888/tcp,
 docker ps --format {{.Names}} | xargs docker stats
 
 # run example data (pi calc)
-docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.0.0.jar pi 10 100
+docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.0.1.jar pi 10 100
 
 # view job history in web ui
 open http://$(docker-machine ip default):19888
