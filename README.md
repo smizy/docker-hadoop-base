@@ -1,7 +1,7 @@
 # docker-hadoop-base
 
-[![](https://images.microbadger.com/badges/image/smizy/hadoop-base:2.7.5-alpine.svg)](http://microbadger.com/images/smizy/hadoop-base:2.7.5-alpine "Get your own image badge on microbadger.com")
-[![](https://images.microbadger.com/badges/version/smizy/hadoop-base:2.7.5-alpine.svg)](http://microbadger.com/images/smizy/hadoop-base:2.7.5-alpine "Get your own image badge on microbadger.com")
+[![](https://images.microbadger.com/badges/image/smizy/hadoop-base:2.7.6-alpine.svg)](http://microbadger.com/images/smizy/hadoop-base:2.7.6-alpine "Get your own image badge on microbadger.com")
+[![](https://images.microbadger.com/badges/version/smizy/hadoop-base:2.7.6-alpine.svg)](http://microbadger.com/images/smizy/hadoop-base:2.7.6-alpine "Get your own image badge on microbadger.com")
 [![CircleCI](https://circleci.com/gh/smizy/docker-hadoop-base.svg?circle-token=155cf7c34ea00da94d6d7848796b96d62d95de48)](https://circleci.com/gh/smizy/docker-hadoop-base)
 
 Hadoop(Common/HDFS/YARN/MapReduce) docker image based on alpine
@@ -58,7 +58,7 @@ zookeeper-1         entrypoint.sh -server 1 1 vnet   Up      2181/tcp, 2888/tcp,
 docker ps --format {{.Names}} | xargs docker stats
 
 # run example data (pi calc)
-docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.5.jar pi 10 100
+docker exec -it -u hdfs datanode-1 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.6.jar pi 10 100
 
 # view job history in web ui
 open http://$(docker-machine ip default):19888
