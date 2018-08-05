@@ -7,8 +7,8 @@ jobs:
       - image: docker:17.05.0-ce-git
 
     environment:
-      VERSION: "2.7.6"
-      TAG: "2.7.6-alpine"
+      VERSION: "2.7.7"
+      TAG: "2.7.7-alpine"
       # TAG: ${VERSION}-alpine
       # TAG_MINOR: ${VERSION%.*}-alpine
       # TAG_MAJOR: ${VERSION%%.*}-alpine 
